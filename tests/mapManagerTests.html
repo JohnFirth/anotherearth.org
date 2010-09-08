@@ -1,0 +1,64 @@
+<html>
+	<head>
+		<script language="JavaScript" src="jsUnitCore.js"></script>
+		<script type="text/javascript" src="../web/js/jquery-1.3.2.js"></script>
+		<script type="text/javascript" src="../web/js/jquery-ui-1.7.2/ui/ui.core.js"></script>
+		<script type="text/javascript" src="../webjs/jquery-ui-1.7.2/ui/ui.draggable.js"></script>
+		<script type="text/javascript" 
+						src="http://maps.google.com/maps?file=api&amp;v=2&amp;sensor=true&amp;key=ABQIAAAAXlB-hI7mbWiEzmErvxFCOxQl3RyIb2V17CZZBWwX-irtEhv96RQrwK8WhcBZXFYMr8bmfP9N_BVlWQ"></script>	
+		<script type="text/javascript" src="../web/js/two_maps_classes.js"></script>
+
+		<script>
+			function setUp() {
+				ObserverMock = function() {
+					hasPerformUpdateBeenCalled: false,
+					performUndoRedoUpdate: function() {
+						hasPerformUpdateBeenCalled = true;
+					}
+				}
+			}
+
+			function testRedoOnBlankHistory() {
+				mapManagerTestObject = new twoMaps.MapManager();
+				observerMock = new ObserverMock;
+				mapManagerTestObject.registerUndoRedoObserver(observerMock);
+				mapManagerTestObject.redo();
+				assertEquals("attempting to redo when nothing has been saved should leave remaining redos at 0", 0, mapManagerTestObject.getNumberRemainingRedos());
+				assertEquals("attempting to redo when nothing has been saved should leave remaining undos at -1 (why -1, John)", -1, mapManagerTestObject.getNumberRemainingUndos());//WTF??
+				assertFalse(observerMock.hasPerformUpdateBeenCalled);
+				delete mapManagerTestObject;
+				delete observerMock;
+			}
+
+			function testUndoOnBlankHistory() {
+				mapManagerTestObject = new twoMaps.MapManager();
+				observerMock = new ObserverMock;
+				mapManagerTestObject.registerUndoRedoObserver(observerMock);
+				mapManagerTestObject.undo();
+				assertEquals("attempting to undo when nothing has been saved should leave remaining redos at 0", 0, mapManagerTestObject.getNumberRemainingRedos());
+				assertEquals("attempting to undo when nothing has been saved should leave remaining undos at -1 (why -1, John?)", -1, mapManagerTestObject.getNumberRemainingUndos());//WTF??
+				assertFalse(observerMock.hasPerformUpdateBeenCalled);
+				delete mapManagerTestObject;
+				delete observerMock;
+			}
+
+			function testRedoOnSingleHistoryItem() {//hypothetical situation
+				mapManagerTestObject = new twoMaps.MapManager();
+				observerMock = new ObserverMock;
+				mapManagerTestObject.registerUndoRedoObserver(observerMock);
+				mapManagerTestObject.redo();
+				assertEquals("attempting to redo when nothing has been saved should leave remaining redos at 0", 0, mapManagerTestObject.getNumberRemainingRedos());
+				assertEquals("attempting to redo when nothing has been saved should leave remaining undos at 0", 0, mapManagerTestObject.getNumberRemainingUndos());//WTF??
+				assertTrue(observerMock.hasPerformUpdateBeenCalled);
+				delete mapManagerTestObject;
+				delete observerMock;
+			}
+
+			function tearDown() {
+				delete ObserverMock;
+			}
+		</script>
+	</head>
+	<body>
+	</body>
+</html>

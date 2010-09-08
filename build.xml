@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="anotherearth" default="usage" basedir=".">
+
+	<description>Tests, and deploys the two maps project.</description>
+
+	<property file="build.properties" />
+ 	<property name="src.dir" value="src" />
+ 	<property name="build.dir" value="build" />
+ 	<property name="tests.report.dir" value="/home/john/work/jsunit/tests/report" />
+	<property name="name" value="anotherearth" />
+	<property name="appserver.lib" value="" />
+	<property name="jsUnitJar.dir" value="/home/john/work/jsunit/java/bin/" />
+
+	<path id="master-classpath">
+		<fileset dir="${jsUnitJar.dir}">
+			<include name="*.jar" />
+		</fileset>	
+	</path>
+
+	<target name="usage">
+		<echo message="" />
+		<echo message="${name} build file" />
+		<echo message="-----------------------------------" />
+		<echo message="" />
+		<echo message="Available targets are:" />
+		<echo message="" />
+		<echo message="clean     --> Clean test reports dir" />
+		<echo message="jsunit_test --> Unit test javascript" />
+		<echo message="js.minify      --> shrink JavaScript files" />
+		<echo message="css.minify      --> shrink CSS files" />
+		<echo message="build     --> Build application" />
+		<echo message="deploy    --> Deploy application as directory" />
+		<echo message="install   --> Install application in Tomcat" />
+		<echo message="reload    --> Reload application in Tomcat" />
+		<echo message="start     --> Start Tomcat application" />
+		<echo message="stop      --> Stop Tomcat application" />
+		<echo message="list      --> List Tomcat applications" />
+		<echo message=""/>
+	</target>
+	
+	<target name="clean">
+		<delete dir="${build.dir}" />
+	</target>
+
+	<target name="jsunit_test" depends="clean" description="use in-browser jsunit test">
+		<subant target="standalone_test">
+			<property name="url" value="file:///home/john/work/jsunit/testRunner.html?testPage=file:///home/john/work/two_maps_wc/tests/mapManagerTests.html&amp;autoRun=true" />
+			<fileset dir="${jsunit.home}" includes="build.xml" />
+		</subant>
+	</target>
+
+	<target name="js.minify">
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${build.dir}/concatenated" />
+
+		<delete file="${src.dir}/js/*-min.js" />
+
+		<concat destfile="${build.dir}/concatenated/anotherearth-static.js">
+			<filelist dir="${src.dir}/js" files="license.js, Translator-1.0.1.js, ui.dropdownchecklist.js, jquery.bgiframe.min.js, anotherearth_classes.js, anotherearth_init.js" />
+		</concat>
+
+		<apply executable="java" parallel="false" failonerror="true">
+			<fileset dir="${build.dir}/concatenated" includes="*.js" />
+			<arg line="-jar" />	
+			<arg path="yuicompressor.jar" />
+			<srcfile />
+			<arg line="-o" />
+			<mapper type="glob" from="*.js" to="${src.dir}/js/*-min.js" />
+			<targetfile/>
+		</apply>
+	
+		<apply executable="java" parallel="false" failonerror="true">
+			<filelist dir="${src.dir}/js" files="main_container.js" />
+			<arg line="-jar" />	
+			<arg path="yuicompressor.jar" />
+			<srcfile />
+			<arg line="-o" />
+			<mapper type="glob" from="*.js" to="${src.dir}/js/*-min.js" />
+			<targetfile/>
+		</apply>
+
+		<delete dir="${build.dir}/concatenated" />
+	</target>
+
+	<target name="css.minify">
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${build.dir}/concatenated" />
+		
+		<delete file="${src.dir}/css/*-min.css" />
+
+		<concat destfile="${build.dir}/concatenated/anotherearth.css">
+			<filelist dir="${src.dir}/css" files="anotherearth.css, jquery-ui-1.7.2.custom.css, ui.dropdownchecklist.css" />
+		</concat>
+
+		<apply executable="java" parallel="false" failonerror="true">
+			<fileset dir="${build.dir}/concatenated" includes="anotherearth.css"/>
+			<arg line="-jar"/>
+			<arg path="yuicompressor.jar"/>
+			<arg line="--line-break 0"/>
+			<srcfile/>
+			<arg line="-o"/>
+			<mapper type="glob" from="*.css" to="${src.dir}/css/*-min.css"/>
+			<targetfile/>
+		</apply>
+		
+		<delete dir="${build.dir}/concatenated" />
+	</target>
+
+	<target name="build" depends="clean, css.minify, js.minify">
+		<mkdir dir="${build.dir}" />
+		<copy todir="${build.dir}" preservelastmodified="true">
+			<fileset dir="${src.dir}" id="not.license">
+				<include name="**/*.*" />
+				<exclude name="js/license.js" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="deploy" depends="build" description="Deploy application">
+		<delete dir="${deploy.path}/anotherearth" />
+
+		<copy todir="${deploy.path}/${name}" preservelastmodified="true">
+			<fileset dir="${build.dir}">
+				<exclude name="**/.svn/**" />
+				<include name="**/*.*" />
+			</fileset>
+		</copy>
+
+		<delete dir="${build.dir}" />
+	</target>
+
+	<!-- ============================================================== -->
+	<!-- Tomcat tasks  -->
+	<!-- ============================================================== -->
+
+	<path id="catalina-ant-classpath">
+			<!-- We need the Catalina jars for Tomcat -->
+			<!--  * for other app servers - check the docs -->
+			<fileset dir="${appserver.lib}">
+					<include name="catalina-ant.jar"/>
+			</fileset>
+	</path>
+
+	<taskdef name="install" classname="org.apache.catalina.ant.InstallTask">
+			<classpath refid="catalina-ant-classpath"/>
+	</taskdef>
+	<taskdef name="reload" classname="org.apache.catalina.ant.ReloadTask">
+			<classpath refid="catalina-ant-classpath"/>
+	</taskdef>
+	<taskdef name="list" classname="org.apache.catalina.ant.ListTask">
+			<classpath refid="catalina-ant-classpath"/>
+	</taskdef>
+	<taskdef name="start" classname="org.apache.catalina.ant.StartTask">
+			<classpath refid="catalina-ant-classpath"/>
+	</taskdef>
+	<taskdef name="stop" classname="org.apache.catalina.ant.StopTask">
+			<classpath refid="catalina-ant-classpath"/>
+	</taskdef>
+
+	<target name="install" description="Install application in Tomcat">
+			<install url="${tomcat.manager.url}"
+							 username="${tomcat.manager.username}"
+							 password="${tomcat.manager.password}"
+							 path="/${name}"
+							 war="${name}"/>
+	</target>
+
+	<target name="reload" description="Reload application in Tomcat">
+			<reload url="${tomcat.manager.url}"
+							 username="${tomcat.manager.username}"
+							 password="${tomcat.manager.password}"
+							 path="/${name}"/>
+	</target>
+
+	<target name="start" description="Start Tomcat application">
+			<start url="${tomcat.manager.url}"
+							 username="${tomcat.manager.username}"
+							 password="${tomcat.manager.password}"
+							 path="/${name}"/>
+	</target>
+
+	<target name="stop" description="Stop Tomcat application">
+			<stop url="${tomcat.manager.url}"
+							 username="${tomcat.manager.username}"
+							 password="${tomcat.manager.password}"
+							 path="/${name}"/>
+	</target>
+
+	<target name="list" description="List Tomcat applications">
+			<list url="${tomcat.manager.url}"
+							 username="${tomcat.manager.username}"
+							 password="${tomcat.manager.password}"/>
+	</target>
+
+<!-- End Tomcat tasks -->
+</project>
