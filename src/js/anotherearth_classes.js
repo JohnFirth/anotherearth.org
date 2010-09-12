@@ -1822,14 +1822,6 @@ org.anotherearth.LockableEarth = function(canvasDivId, earthsController, initial
 	this.createEarthInstance = function() {
 		google.earth.createInstance(canvasDivId, _initEarth, _initEarthFailed);
 	};
-	/* TODO: can't enable this for a map while the other is loading, nor apparently very shortly after enabling it for another map
-	this.isHistoricalImageryEnabled = function(newIsHistoricalImageryEnabled) {
-		if (isHistoricalImageryEnabled !== newIsHistoricalImageryEnabled && ge !== null) {
-			isHistoricalImageryEnabled = newIsHistoricalImageryEnabled;
-			ge.getTime().setHistoricalImageryEnabled(newIsHistoricalImageryEnabled);
-		}
-	};
-	*/
 	this.setCanvasPositionAndSize = function(top, left, width, height) {
 		$(earthCanvas).css('top', top).css('left', left).css('width', width).css('height', height);
 	};
