@@ -1623,7 +1623,7 @@ org.anotherearth.LockableEarth = function(canvasDivId, earthsController, initial
 	var ALTITUDE_TYPE;
 	var REGULAR_FLY_TO_SPEED = 3.5;
 	var ge;
-	var geView, geWindow, geOptions, geLayerRoot;
+	var geView, geWindow, geOptions, geLayerRoot, geTime;
 	var overlays = {};
 	var isNextViewChangeIgnored    = false;
 	var isNextViewChangeEndIgnored = false;
@@ -1632,6 +1632,7 @@ org.anotherearth.LockableEarth = function(canvasDivId, earthsController, initial
 	var earthCanvas;
 	var currentKmlObject;
 	var kmlUrl;
+	var isHistoricalImageryEnabled;
 
 	//private functions
 	var _fetchKml = function() {
@@ -1653,6 +1654,7 @@ org.anotherearth.LockableEarth = function(canvasDivId, earthsController, initial
 		geWindow    = instance.getWindow();
 		geOptions   = instance.getOptions();
 		geLayerRoot = instance.getLayerRoot();
+		geTime     = instance.getTime();
 		
 		ge.getNavigationControl().setVisibility(ge.VISIBILITY_AUTO);
 		ALTITUDE_TYPE = ge.ALTITUDE_ABSOLUTE;
@@ -1665,9 +1667,9 @@ org.anotherearth.LockableEarth = function(canvasDivId, earthsController, initial
 		geLayerRoot.enableLayerById(ge.LAYER_BUILDINGS, true);	
 		geLayerRoot.enableLayerById(ge.LAYER_BUILDINGS_LOW_RESOLUTION, true);
 			
-		overlays.borders = geLayerRoot.getLayerById(ge.LAYER_BORDERS);
-		overlays.roads = geLayerRoot.getLayerById(ge.LAYER_ROADS);
-		overlays.terrain = geLayerRoot.getLayerById(ge.LAYER_TERRAIN);
+		overlays.borders        = geLayerRoot.getLayerById(ge.LAYER_BORDERS);
+		overlays.roads          = geLayerRoot.getLayerById(ge.LAYER_ROADS);
+		overlays.terrain        = geLayerRoot.getLayerById(ge.LAYER_TERRAIN);
 		overlays.hiResBuildings = geLayerRoot.getLayerById(ge.LAYER_BUILDINGS);
 		overlays.loResBuildings = geLayerRoot.getLayerById(ge.LAYER_BUILDINGS_LOW_RESOLUTION);
 
@@ -1801,8 +1803,17 @@ org.anotherearth.LockableEarth = function(canvasDivId, earthsController, initial
 			case 'terrain':
 				overlays.terrain.setVisibility(!overlays.terrain.getVisibility());
 				break;
+			case 'time':
+				if (geTime.getHistoricalImageryEnabled()) {
+					var timeControl = geTime.getControl();
+					timeControl.getVisibility() ? timeControl.setVisibility(ge.VISIBILITY_HIDE) : timeControl.setVisibility(ge.VISIBILITY_SHOW);
+				}
+				else {
+					geTime.setHistoricalImageryEnabled(true);
+				}
+				break;
 			default:
-				var errorMessage = 'unrecognised overlay type: ' + overlayId;
+				var errorMessage = 'Unrecognised Overlay Type: ' + overlayId;
 				var error = new Error();
 				error.message = errorMessage;
 				throw error;
@@ -1811,6 +1822,14 @@ org.anotherearth.LockableEarth = function(canvasDivId, earthsController, initial
 	this.createEarthInstance = function() {
 		google.earth.createInstance(canvasDivId, _initEarth, _initEarthFailed);
 	};
+	/* TODO: can't enable this for a map while the other is loading, nor apparently very shortly after enabling it for another map
+	this.isHistoricalImageryEnabled = function(newIsHistoricalImageryEnabled) {
+		if (isHistoricalImageryEnabled !== newIsHistoricalImageryEnabled && ge !== null) {
+			isHistoricalImageryEnabled = newIsHistoricalImageryEnabled;
+			ge.getTime().setHistoricalImageryEnabled(newIsHistoricalImageryEnabled);
+		}
+	};
+	*/
 	this.setCanvasPositionAndSize = function(top, left, width, height) {
 		$(earthCanvas).css('top', top).css('left', left).css('width', width).css('height', height);
 	};
@@ -2186,6 +2205,7 @@ org.anotherearth.EarthsController = function(earthsManager, initialLocks) {
 
 org.anotherearth.URLManager = {};
 org.anotherearth.URLManager.createURLFromCurrentParameters = function(LEarth, REarth, earthsManager) {//static method
+		//TODO:add times
 		var LEarthProps = LEarth.getCameraProperties();
 		var REarthProps = REarth.getCameraProperties();
 		var parameters = {};
