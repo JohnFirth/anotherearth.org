@@ -1618,7 +1618,7 @@ org.anotherearth.EarthsManager = function() {
 	};
 };
 
-org.anotherearth.LockableEarth = function(canvasDivId, earthsController, initialCameraProperties) {
+org.anotherearth.LockableEarth = function(canvasDivId, earthsController, initialCameraProperties, kmlUrl) {
 	//private variables
 	var ALTITUDE_TYPE;
 	var REGULAR_FLY_TO_SPEED = 3.5;
@@ -1631,7 +1631,7 @@ org.anotherearth.LockableEarth = function(canvasDivId, earthsController, initial
 	var canvasDivId = canvasDivId;
 	var earthCanvas;
 	var currentKmlObject;
-	var kmlUrl;
+	var kmlUrl = kmlUrl;
 	var isHistoricalImageryEnabled;
 
 	//private functions
@@ -1804,9 +1804,12 @@ org.anotherearth.LockableEarth = function(canvasDivId, earthsController, initial
 				overlays.terrain.setVisibility(!overlays.terrain.getVisibility());
 				break;
 			case 'time':
+				var timeControl = geTime.getControl();
 				if (geTime.getHistoricalImageryEnabled()) {
-					var timeControl = geTime.getControl();
 					timeControl.getVisibility() ? timeControl.setVisibility(ge.VISIBILITY_HIDE) : timeControl.setVisibility(ge.VISIBILITY_SHOW);
+				}
+				else if (timeControl.getVisibility()) {
+					geTime.setHistoricalImageryEnabled(false);
 				}
 				else {
 					geTime.setHistoricalImageryEnabled(true);
