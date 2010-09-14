@@ -1851,14 +1851,14 @@ org.anotherearth.LockableEarth = function(canvasDivId, earthsController, initial
 org.anotherearth.EarthsController = function(earthsManager, initialLocks) {
 	//private fields
 	var controlPanel;
-	var leftEarth, rightEarth, linkCreatorButton, altLockingCheckbox, tiltLockingCheckbox, latLngLockingCheckbox, headingLockingCheckbox, donorCameraSelector;
+	var leftEarth, rightEarth, linkCreatorButton;
 	var earthsManager = earthsManager;
-	var loadedEarths = 0;
 	var donor, receiver;
 	var timeOfLastAttemptedSave = null;
 	var timeOfPenultimateAttemptedSave = null;
 	var minTimeBetweenSaves = 2000; //ms
 	var moveInitializingEarth = null;
+	var responseToEarthLoading = null;
 
 	//private methods
 
@@ -1904,6 +1904,9 @@ org.anotherearth.EarthsController = function(earthsManager, initialLocks) {
 	};
 
 	//privileged methods
+	this.setEarthLoadingResponseCallback = function (callback) {
+		responseToEarthLoading = callback;
+	};
 	this.getMoveInitializingEarth = function() {
 		return moveInitializingEarth;
 	};
@@ -1929,25 +1932,7 @@ org.anotherearth.EarthsController = function(earthsManager, initialLocks) {
 		timeOfPenultimateAttemptedSave = null;
 	};
 	this.respondToEarthFullyLoading = function() {
-		if (++loadedEarths == 2) {
-			altLockingCheckbox.setIsChecked(initialLocks.alt);
-			tiltLockingCheckbox.setIsChecked(initialLocks.tilt);
-			latLngLockingCheckbox.setIsChecked(initialLocks.latLng);
-			headingLockingCheckbox.setIsChecked(initialLocks.heading);
-			donorCameraSelector.setIsChecked(true, donorCameraSelector.getIndexOf('left_camera'));
-			controlPanel.performNewEarthPropsUpdate();
-			controlPanel.show();
-			//need to set these widths in pixels once the elements have been created to avoid jerkiness and resizing with subpanel and panel shrinking (jQuery flaws)
-			$('#' + org.anotherearth.CP_ID + ' button').width($('#' + org.anotherearth.CP_ID + ' button').width());
-			$('#' + org.anotherearth.CP_ID).width($('#' + org.anotherearth.CP_ID).width());
-			var viewportHeight = window.innerHeight ? window.innerHeight : $(window).height();
-			var controlPanelElement = controlPanel.getContainingElement();
-			var totalPanelHeight =  $(controlPanelElement).outerHeight();
-			var panelTopOffset = parseInt(($(controlPanelElement).css('top')).replace(/(\d+)px/, "$1"), 10);
-			if (viewportHeight <= (($(controlPanel.getContainingElement()).outerHeight()) + panelTopOffset)) {
-				controlPanel.closeSubPanels();
-			}
-		}
+		responseToEarthLoading();
 	};
 	this.moveOtherEarthIfLocked = function(givingEarth) {
 		movingEarth = givingEarth;
@@ -2022,22 +2007,6 @@ org.anotherearth.EarthsController = function(earthsManager, initialLocks) {
 	};
 	this.setRightEarth = function(earth) {
 		rightEarth = earth;
-	};
-	this.setAltLockingCheckbox = function(checkbox) {
-		altLockingCheckbox = checkbox;
-	};
-	this.setTiltLockingCheckbox = function(checkbox) {
-		tiltLockingCheckbox = checkbox;
-	};
-	this.setLatLngLockingCheckbox = function(checkbox) {
-		latLngLockingCheckbox = checkbox;
-	};
-	this.setHeadingLockingCheckbox = function(checkbox) {
-		headingLockingCheckbox = checkbox;
-	};
-	this.setDonorCameraSelector = function(radioButtons) {
-		//TODO: type checking
-		donorCameraSelector = radioButtons;
 	};
 	this.setControlPanel = function(newPanel) {
 		controlPanel = newPanel;

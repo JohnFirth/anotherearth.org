@@ -130,11 +130,6 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 		coms.tiltLockingCheckbox.addClickEventListener(coms.toggleTiltLockCommand);
 		coms.headingLockingCheckbox.addClickEventListener(coms.toggleHeadingLockCommand);
 
-		coms.earthsController.setAltLockingCheckbox(coms.altLockingCheckbox);
-		coms.earthsController.setTiltLockingCheckbox(coms.tiltLockingCheckbox);
-		coms.earthsController.setLatLngLockingCheckbox(coms.latLngLockingCheckbox);
-		coms.earthsController.setHeadingLockingCheckbox(coms.headingLockingCheckbox);
-
 		//buttons
 		coms.undoButton = new ae.TwoEarthsButton('undo', org.anotherearth.CP_UNDO_BUTTON_ID, coms.earthsManager);
 		coms.undoButton.addClickEventListener(coms.undoCommand);
@@ -202,7 +197,6 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 		donorRadios.push(rightCameraRadios);
 		coms.donorRadioButtons = new ae.RadioButtons(donorRadios, 'donor_camera_selector');
 		coms.donorRadioButtons.addClickEventListener(coms.toggleDonorEarthCommand);
-		coms.earthsController.setDonorCameraSelector(coms.donorRadioButtons);
 
 		//select box
 		var borderOption          = {};
@@ -281,6 +275,34 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 
 		coms.miscellaneousSubPanel      = new ae.ShrinkableSubPanel("undo/redo and save",
 		                                                              org.anotherearth.CP_MISC_OPTIONS_SUB_PANEL_ID);	
+
+		var getLoadedEarths = (function() {
+			var loadedEarths = 0;
+			return function() { return ++loadedEarths; };
+		})();
+
+		var responseToEarthFullyLoading = function() {
+			if (getLoadedEarths() === 2) {
+				coms.altLockingCheckbox.setIsChecked(initialLocks.alt);
+				coms.tiltLockingCheckbox.setIsChecked(initialLocks.tilt);
+				coms.latLngLockingCheckbox.setIsChecked(initialLocks.latLng);
+				coms.headingLockingCheckbox.setIsChecked(initialLocks.heading);
+				coms.donorRadioButtons.setIsChecked(true, coms.donorRadioButtons.getIndexOf('left_camera'));
+				coms.controlPanel.performNewEarthPropsUpdate();
+				coms.controlPanel.show();
+				//need to set these widths in pixels once the elements have been created to avoid jerkiness and resizing with subpanel and panel shrinking (jQuery flaws)
+				$('#' + org.anotherearth.CP_ID + ' button').width($('#' + org.anotherearth.CP_ID + ' button').width());
+				$('#' + org.anotherearth.CP_ID).width($('#' + org.anotherearth.CP_ID).width());
+				var viewportHeight = window.innerHeight ? window.innerHeight : $(window).height();
+				var controlPanelElement = coms.controlPanel.getContainingElement();
+				var panelTopOffset = parseInt(($(controlPanelElement).css('top')).replace(/(\d+)px/, "$1"), 10);
+				if (viewportHeight <= (($(coms.controlPanel.getContainingElement()).outerHeight()) + panelTopOffset)) {
+					coms.controlPanel.closeSubPanels();
+				}
+			}
+		};
+
+		coms.earthsController.setEarthLoadingResponseCallback(responseToEarthFullyLoading);
 
 		//add gui widgets to control panel
 		coms.checkBoxSubPanel.addChild(coms.altLockingCheckbox);

@@ -133,9 +133,8 @@
 	<!-- Tomcat tasks  -->
 	<!-- ============================================================== -->
 
+	<!--
 	<path id="catalina-ant-classpath">
-			<!-- We need the Catalina jars for Tomcat -->
-			<!--  * for other app servers - check the docs -->
 			<fileset dir="${appserver.lib}">
 					<include name="catalina-ant.jar"/>
 			</fileset>
@@ -191,6 +190,6 @@
 							 username="${tomcat.manager.username}"
 							 password="${tomcat.manager.password}"/>
 	</target>
-
+-->
 <!-- End Tomcat tasks -->
 </project>
