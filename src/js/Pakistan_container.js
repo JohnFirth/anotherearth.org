@@ -11,23 +11,26 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 		var initialRCameraProps = {};
 		var initialLocks = {};
 		var queryStringValues = {};
+		/* do not respond to URL query string arguments
 		queryStringValues.latLng  = urlManager.getURLQueryStringValue('isLatLngLocked');
 		queryStringValues.alt     = urlManager.getURLQueryStringValue('isAltLocked');
 		queryStringValues.tilt    = urlManager.getURLQueryStringValue('isTiltLocked');
 		queryStringValues.heading = urlManager.getURLQueryStringValue('isHeadingLocked'); 
+		*/
 		for (var value in queryStringValues) {
 			initialLocks[value] = ((queryStringValues[value] !== null) ? parseInt(queryStringValues[value], 10) : 1);
 		}
-		initialLCameraProps.lat  = parseFloat(urlManager.getURLQueryStringValue('LLat'))  || org.anotherearth.DEFAULT_L_EARTH_COORDS.LAT;
-		initialLCameraProps.lng  = parseFloat(urlManager.getURLQueryStringValue('LLng'))  || org.anotherearth.DEFAULT_L_EARTH_COORDS.LNG;
-		initialLCameraProps.alt  = parseFloat(urlManager.getURLQueryStringValue('LAlt'))  || org.anotherearth.DEFAULT_L_EARTH_COORDS.ALT;
-		initialLCameraProps.tilt = parseFloat(urlManager.getURLQueryStringValue('LTilt')) || org.anotherearth.DEFAULT_L_EARTH_COORDS.TILT;
-		initialLCameraProps.head = parseFloat(urlManager.getURLQueryStringValue('LHead')) || org.anotherearth.DEFAULT_L_EARTH_COORDS.HEAD;
-		initialRCameraProps.lat  = parseFloat(urlManager.getURLQueryStringValue('RLat'))  || org.anotherearth.DEFAULT_R_EARTH_COORDS.LAT;
-		initialRCameraProps.lng  = parseFloat(urlManager.getURLQueryStringValue('RLng'))  || org.anotherearth.DEFAULT_R_EARTH_COORDS.LNG;
-		initialRCameraProps.alt  = parseFloat(urlManager.getURLQueryStringValue('RAlt'))  || org.anotherearth.DEFAULT_R_EARTH_COORDS.ALT;
-		initialRCameraProps.tilt = parseFloat(urlManager.getURLQueryStringValue('RTilt')) || org.anotherearth.DEFAULT_R_EARTH_COORDS.TILT;
-		initialRCameraProps.head = parseFloat(urlManager.getURLQueryStringValue('RHead')) || org.anotherearth.DEFAULT_R_EARTH_COORDS.HEAD;
+
+		initialLCameraProps.lat  = 28.345036;
+		initialLCameraProps.lng  = 69.447603;
+		initialLCameraProps.alt  = 70000;
+		initialLCameraProps.tilt = 0;
+		initialLCameraProps.head = 0;
+		initialRCameraProps.lat  = 28.345036;
+		initialRCameraProps.lng  = 69.447603;
+		initialRCameraProps.alt  = 70000;
+		initialRCameraProps.tilt = 0;
+		initialRCameraProps.head = 0;
 
 		coms.welcomePanel = new ae.Panel(org.anotherearth.WELCOME_PANEL_BODY_ID,
 		                                 org.anotherearth.WELCOME_PANEL_HEADER_ID,
@@ -224,64 +227,54 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 		latLngGridlinesOption.text  = "grid";
 		latLngGridlinesOption.value = "grid";
 		var LEarthOptions = [borderOption,
-		                        hiResBuildingsOption,
-		                        loResBuildingsOption,
-		                        roadsOption,
-		                        terrainOption,
-		                        //sunOption,TODO: reinstate when search boxes are part of (accordian) control panel
-		                        //atmosphereOption,TODO: reinstate when checked on by default
-														//TODO: make scale bars and status bar selectable
-		                        latLngGridlinesOption];
+		                     hiResBuildingsOption,
+		                     loResBuildingsOption,
+		                     roadsOption,
+		                     terrainOption,
+		                     //sunOption,TODO: reinstate when search boxes are part of (accordian) control panel
+		                     //atmosphereOption,TODO: reinstate when checked on by default
+		                     //TODO: make scale bars and status bar selectable
+		                     latLngGridlinesOption];
 		var REarthOptions = [$.extend(true, {}, borderOption),           //deep copies of the option objects
 		                     $.extend(true, {}, hiResBuildingsOption),
-                         $.extend(true, {}, loResBuildingsOption),
+		                     $.extend(true, {}, loResBuildingsOption),
 		                     $.extend(true, {}, roadsOption),
 		                     $.extend(true, {}, terrainOption),
-                         //$.extend(true, {}, sunOption),
+		                     //$.extend(true, {}, sunOption),
 		                     //$.extend(true, {}, atmosphereOption),
 		                     $.extend(true, {}, latLngGridlinesOption)];
 		
-		coms.LEarthOptionSelector = new ae.SelectBox(LEarthOptions,
-		                                             1,
-		                                             'left Earth',
-		                                             org.anotherearth.CP_L_EARTH_EXTRAS_SELECTOR_ID,
-		                                             true);
-		coms.REarthOptionSelector = new ae.SelectBox(REarthOptions,
-		                                             1,
-		                                             'right Earth',
-		                                             org.anotherearth.CP_R_EARTH_EXTRAS_SELECTOR_ID,
-		                                             true);
+		coms.LEarthOptionSelector = new ae.SelectBox(LEarthOptions, 1, 'left Earth',  org.anotherearth.CP_L_EARTH_EXTRAS_SELECTOR_ID, true);
+		coms.REarthOptionSelector = new ae.SelectBox(REarthOptions, 1, 'right Earth', org.anotherearth.CP_R_EARTH_EXTRAS_SELECTOR_ID, true);
 
 		coms.LEarthOptionSelector.addClickEventListener(coms.toggleEarthExtraCommand);
 		coms.REarthOptionSelector.addClickEventListener(coms.toggleEarthExtraCommand);
 		
 		//search boxes
-		coms.leftEarthSearch  = new org.anotherearth.SearchBox(coms.leftEarth, coms.earthsController, org.anotherearth.L_EARTH_SEARCH_BOX_ID, 'left Earth');
+		coms.leftEarthSearch  = new org.anotherearth.SearchBox(coms.leftEarth,  coms.earthsController, org.anotherearth.L_EARTH_SEARCH_BOX_ID, 'left Earth');
 		coms.rightEarthSearch = new org.anotherearth.SearchBox(coms.rightEarth, coms.earthsController, org.anotherearth.R_EARTH_SEARCH_BOX_ID, 'right Earth');
 
 		//control panel fieldsets
-		coms.checkBoxSubPanel           = new ae.ShrinkableSubPanel("synchronize camera movement",
-		                                                              org.anotherearth.CP_CAMERA_PROPERTY_LOCKING_SUB_PANEL_ID);	
-		coms.cameraPropCopyingSubPanel  = new ae.ShrinkableSubPanel("copy camera coordinates",
-		                                                              org.anotherearth.CP_CAMERA_PROPERTY_COPYING_SUB_PANEL_ID);	
-		coms.earthOptionsSubPanel       = new ae.ShrinkableSubPanel("Earth overlays",
-		                                                              org.anotherearth.CP_EARTH_OPTIONS_SUB_PANEL_ID);	
-		coms.searchBoxSubPanel          = new ae.ShrinkableSubPanel("search",
-		                                                              org.anotherearth.CP_SEARCH_BOX_SUB_PANEL_ID);	
+		coms.checkBoxSubPanel           = new ae.ShrinkableSubPanel("synchronize camera movement", org.anotherearth.CP_CAMERA_PROPERTY_LOCKING_SUB_PANEL_ID);	
+		coms.cameraPropCopyingSubPanel  = new ae.ShrinkableSubPanel("copy camera coordinates",     org.anotherearth.CP_CAMERA_PROPERTY_COPYING_SUB_PANEL_ID);	
+		coms.earthOptionsSubPanel       = new ae.ShrinkableSubPanel("Earth overlays",              org.anotherearth.CP_EARTH_OPTIONS_SUB_PANEL_ID);	
+		coms.searchBoxSubPanel          = new ae.ShrinkableSubPanel("search",                      org.anotherearth.CP_SEARCH_BOX_SUB_PANEL_ID);	
 		var googleBranding = document.createElement('span');
 		googleBranding.id = 'google_search_branding';
 
 		$(coms.searchBoxSubPanel.getContainingElement()).find('.sub_panel_title').append(googleBranding);
 
-		coms.miscellaneousSubPanel      = new ae.ShrinkableSubPanel("undo/redo and save",
-		                                                              org.anotherearth.CP_MISC_OPTIONS_SUB_PANEL_ID);	
+		coms.miscellaneousSubPanel = new ae.ShrinkableSubPanel("undo/redo and save", org.anotherearth.CP_MISC_OPTIONS_SUB_PANEL_ID);	
 
-		
-		/* callbacks on earths and one earth's kml, loading */ 
 		var getLoadedEarths = (function() {
 			var loadedEarths = 0;
 			return function() { return ++loadedEarths; };
 		})();
+
+		var kmlLoadedCallback = function() {
+			coms.rightEarth.setCameraProperties(28.27155, 69.349811, 23842.296337, 60.638956, 65.863623);
+			setTimeout(coms.rightEarth.toggleExtra('time'), 1000);
+		};
 
 		var responseToEarthFullyLoading = function() {
 			if (getLoadedEarths() === 2) {
@@ -301,11 +294,12 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 				if (viewportHeight <= (($(coms.controlPanel.getContainingElement()).outerHeight()) + panelTopOffset)) {
 					coms.controlPanel.closeSubPanels();
 				}
+				coms.rightEarth.addKmlFromUrl('http://www.anotherearth.org/test.kml', kmlLoadedCallback);
 			}
 		};
 
 		coms.earthsController.setEarthLoadingResponseCallback(responseToEarthFullyLoading);
-
+		
 		//add gui widgets to control panel
 		coms.checkBoxSubPanel.addChild(coms.altLockingCheckbox);
 		coms.checkBoxSubPanel.addChild(coms.headingLockingCheckbox);

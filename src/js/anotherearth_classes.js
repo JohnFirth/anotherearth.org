@@ -1618,7 +1618,7 @@ org.anotherearth.EarthsManager = function() {
 	};
 };
 
-org.anotherearth.LockableEarth = function(canvasDivId, earthsController, initialCameraProperties, kmlUrl) {
+org.anotherearth.LockableEarth = function(canvasDivId, earthsController, initialCameraProperties) {
 	//private variables
 	var ALTITUDE_TYPE;
 	var REGULAR_FLY_TO_SPEED = 3.5;
@@ -1634,19 +1634,31 @@ org.anotherearth.LockableEarth = function(canvasDivId, earthsController, initial
 	var kmlUrl = kmlUrl;
 	var isHistoricalImageryEnabled;
 
-	//private functions
-	var _fetchKml = function() {
-		google.earth.fetchKml(ge, kmlUrl, _kmlFinishedLoading);
-	};	
-	var _kmlFinishedLoading = function(kmlObject) {//if kml overlay is applied  		
-		if (kmlObject) {
-			currentKmlObject = kmlObject;
-    	ge.getFeatures().appendChild(kmlObject);
-		
-    	if (kmlObject.getAbstractView() !== null) {
-      	ge.getView().setAbstractView(kmlObject.getAbstractView());
+	//private class
+	var _KmlLoadedCallback = function(callback) {
+		var callback;
+
+		this.set = function(newCallback) {
+			callback = newCallback;
+		};
+		this.enact = function(kmlObject) {//if kml overlay is applied  		
+			if (kmlObject) {
+				currentKmlObject = kmlObject;
+				ge.getFeatures().appendChild(kmlObject);
+			
+				if (kmlObject.getAbstractView() !== null) {
+					ge.getView().setAbstractView(kmlObject.getAbstractView());
+				}
 			}
-  	}
+			callback();
+		};	
+		//constructor
+		this.set(callback);
+	};
+
+	//private functions
+	var _fetchKml = function(callback) {
+		google.earth.fetchKml(ge, kmlUrl, callback.enact);
 	};	
 	var _initEarth = function(instance) {//constructor
 		ge = instance;
@@ -1724,9 +1736,6 @@ org.anotherearth.LockableEarth = function(canvasDivId, earthsController, initial
 			var isCurrentPropSetOverwritten = !earthsController.getIsTimeElapsedSufficientForSave();
 			earthsController.saveCameraProperties(isCurrentPropSetOverwritten);
 		});
-		if (kmlUrl) {//if was set during instantiation
-			_fetchKml();
-		}
 		earthsController.respondToEarthFullyLoading();
 	};
 	var _initEarthFailed = function(errorCode){//this function is mandatory for loading the plugin but unnecessary for me
@@ -1809,7 +1818,7 @@ org.anotherearth.LockableEarth = function(canvasDivId, earthsController, initial
 					timeControl.getVisibility() ? timeControl.setVisibility(ge.VISIBILITY_HIDE) : timeControl.setVisibility(ge.VISIBILITY_SHOW);
 				}
 				else if (timeControl.getVisibility()) {
-					geTime.setHistoricalImageryEnabled(false);
+					timeControl.setVisibility(false);
 				}
 				else {
 					geTime.setHistoricalImageryEnabled(true);
@@ -1828,7 +1837,8 @@ org.anotherearth.LockableEarth = function(canvasDivId, earthsController, initial
 	this.setCanvasPositionAndSize = function(top, left, width, height) {
 		$(earthCanvas).css('top', top).css('left', left).css('width', width).css('height', height);
 	};
-	this.addKmlFromUrl = function(newKmlUrl) {
+	this.addKmlFromUrl = function(newKmlUrl, newKmlLoadedCallback) {
+		kmlLoadedCallback = new _KmlLoadedCallback(newKmlLoadedCallback);
 		if (currentKmlObject) {
 			if (ge) {
 				ge.getFeatures().removeChild(currentKmlObject);
@@ -1837,7 +1847,7 @@ org.anotherearth.LockableEarth = function(canvasDivId, earthsController, initial
 		}
 		kmlUrl = newKmlUrl;
 		if (typeof ge !== 'undefined') {
-			_fetchKml();
+			_fetchKml(kmlLoadedCallback);
 		}
 	};
 	this.show = function() {
