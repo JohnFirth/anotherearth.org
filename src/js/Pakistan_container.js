@@ -35,28 +35,25 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 		coms.welcomePanel = new ae.Panel(org.anotherearth.WELCOME_PANEL_BODY_ID,
 		                                 org.anotherearth.WELCOME_PANEL_HEADER_ID,
 		                                 org.anotherearth.WELCOME_PANEL_ID,
-		                                 'Welcome to anotherearth.org',
+		                                 'Indus river flooding, Pakistan',
 		                                 body,
 		                                 true,
 		                                 true,
 		                                 true);
 		var welcomeText = document.createElement('div');
-		welcomeText.innerHTML = '<p>This application gives you a number of tools with which you can easily ' +
-		                        'and comprehensively compare two views of the Earth, using the Google Earth browser plugin. ' +
-		                        'These include the ability to synchronize the movement of two Earths, ' + 
-		                        'select layers such as buildings, roads and borders for the Earths, ' +
-		                        'jump to locations of your choice, undo/redo any movements, and save coordinates as a URL.</p>' +
-		                        '<p>Please refer to Google\'s documentation ' +
-		                        'for guides to Google Earth and its navigation control.</p>' +
+		welcomeText.innerHTML = '<p>The overlay on the right-hand Earth shows flooding of the Indus river in northern Pakistan ' +
+		                        'around 28 SHa`baan 1431 A.H./ 9 August 2010 A.D. (Imagery from <a href="http://earthobservatory.nasa.gov/IOTD/view.php?id=45343">NASA\'s Earth Observatory</a>.) ' +
+		                        'The left-hand frame shows the Earth on 8 Jumaada al-THaany 1431 / May 22, 2010.</p>' +
+		                        '<p>If you know of kml data more representative of the flooding in Pakistan this year, please get in contact ' +
+		                        'with me at contact(at)anotherearth(dot)org.</p>' +
+		                        '<p>Please see <a href="http://www.google.com/crisisresponse/pakistan_floods.html">www.google.com/crisisresponse/pakistan_floods.html ' +
+		                        '</a> for ways in which you can help.</p>' +
 		                        '<p>If your browser\'s preferred language isn\'t English then using a ' +
 		                        'translator, <span id=\"google_branding\"></span>, ' +
-		                        'I\'ve attempted to convert the text.</p>' +
-		                        '<p>I\'m planning on giving you the ability to compare the Earth in two ' +
-		                        'different states, e.g. at two different times - please check back.</p>' +
-		                        '<p>I hope you find the application useful! Feel free to contact me by email: contact(at)anotherearth(dot)org</p>';
+		                        'I\'ve attempted to convert the text.</p>';
 		
 		if (!$.support.leadingWhitespace) {//if is IE
-			welcomeText.innerHTML += '<p>For a somewhat enhanced experience with this site, I recommend using a browser other than Internet Explorer.</p>';
+			welcomeText.innerHTML += '<p>For a significantly enhanced experience with this site, I recommend using the Firefox or Chrome browsers.</p>';
 		}
 
 		coms.welcomePanel.addChild(new org.anotherearth.MiscellaneousElement(welcomeText));
@@ -264,7 +261,7 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 
 		$(coms.searchBoxSubPanel.getContainingElement()).find('.sub_panel_title').append(googleBranding);
 
-		coms.miscellaneousSubPanel = new ae.ShrinkableSubPanel("undo/redo and save", org.anotherearth.CP_MISC_OPTIONS_SUB_PANEL_ID);	
+		coms.miscellaneousSubPanel = new ae.ShrinkableSubPanel("undo/redo", org.anotherearth.CP_MISC_OPTIONS_SUB_PANEL_ID);	
 
 		var getLoadedEarths = (function() {
 			var loadedEarths = 0;
@@ -273,7 +270,7 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 
 		var kmlLoadedCallback = function() {
 			coms.rightEarth.setCameraProperties(28.27155, 69.349811, 23842.296337, 60.638956, 65.863623);
-			setTimeout(coms.rightEarth.toggleExtra('time'), 1000);
+			setTimeout("org.anotherearth.Container.getInstance().getComponent('rightEarth').toggleExtra('time')", 1000);
 		};
 
 		var responseToEarthFullyLoading = function() {
@@ -314,7 +311,6 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 		coms.earthOptionsSubPanel.addChild(coms.REarthOptionSelector);
 		coms.miscellaneousSubPanel.addChild(coms.undoButton);
 		coms.miscellaneousSubPanel.addChild(coms.redoButton);
-		coms.miscellaneousSubPanel.addChild(coms.linkCreatorButton);
 		coms.searchBoxSubPanel.addChild(coms.leftEarthSearch);
 		coms.searchBoxSubPanel.addChild(coms.rightEarthSearch);
 		coms.controlPanel.addChild(coms.earthOptionsSubPanel);

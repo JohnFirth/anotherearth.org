@@ -42,18 +42,17 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 		                        'and comprehensively compare two views of the Earth, using the Google Earth browser plugin. ' +
 		                        'These include the ability to synchronize the movement of two Earths, ' + 
 		                        'select layers such as buildings, roads and borders for the Earths, ' +
-		                        'jump to locations of your choice, undo/redo any movements, and save coordinates as a URL.</p>' +
+		                        'jump to locations of your choice, undo/redo any movements, and create links to your views.</p>' +
+														'<p>Please see the <a href="Pakistan_floods/index.html">sub-site dedicated to the recent flooding in Pakistan</a>.</p>' +
 		                        '<p>Please refer to Google\'s documentation ' +
 		                        'for guides to Google Earth and its navigation control.</p>' +
 		                        '<p>If your browser\'s preferred language isn\'t English then using a ' +
 		                        'translator, <span id=\"google_branding\"></span>, ' +
 		                        'I\'ve attempted to convert the text.</p>' +
-		                        '<p>I\'m planning on giving you the ability to compare the Earth in two ' +
-		                        'different states, e.g. at two different times - please check back.</p>' +
 		                        '<p>I hope you find the application useful! Feel free to contact me by email: contact(at)anotherearth(dot)org</p>';
 		
 		if (!$.support.leadingWhitespace) {//if is IE
-			welcomeText.innerHTML += '<p>For a somewhat enhanced experience with this site, I recommend using a browser other than Internet Explorer.</p>';
+			welcomeText.innerHTML += '<p>For a significantly enhanced experience with this site, I recommend using the Firefox or Chrome browsers.</p>';
 		}
 
 		coms.welcomePanel.addChild(new org.anotherearth.MiscellaneousElement(welcomeText));
@@ -273,7 +272,7 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 
 		$(coms.searchBoxSubPanel.getContainingElement()).find('.sub_panel_title').append(googleBranding);
 
-		coms.miscellaneousSubPanel      = new ae.ShrinkableSubPanel("undo/redo and save",
+		coms.miscellaneousSubPanel      = new ae.ShrinkableSubPanel("undo/redo and create link",
 		                                                              org.anotherearth.CP_MISC_OPTIONS_SUB_PANEL_ID);	
 
 		

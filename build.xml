@@ -24,17 +24,17 @@
 		<echo message="" />
 		<echo message="Available targets are:" />
 		<echo message="" />
-		<echo message="clean     --> Clean test reports dir" />
+		<echo message="clean       --> Clean test reports dir" />
 		<echo message="jsunit_test --> Unit test javascript" />
-		<echo message="js.minify      --> shrink JavaScript files" />
-		<echo message="css.minify      --> shrink CSS files" />
-		<echo message="build     --> Build application" />
-		<echo message="deploy    --> Deploy application as directory" />
-		<echo message="install   --> Install application in Tomcat" />
-		<echo message="reload    --> Reload application in Tomcat" />
-		<echo message="start     --> Start Tomcat application" />
-		<echo message="stop      --> Stop Tomcat application" />
-		<echo message="list      --> List Tomcat applications" />
+		<echo message="js.minify   --> shrink JavaScript files" />
+		<echo message="css.minify  --> shrink CSS files" />
+		<echo message="build       --> Build application" />
+		<echo message="deploy      --> Deploy application as directory" />
+		<echo message="install     --> Install application in Tomcat" />
+		<echo message="reload      --> Reload application in Tomcat" />
+		<echo message="start       --> Start Tomcat application" />
+		<echo message="stop        --> Stop Tomcat application" />
+		<echo message="list        --> List Tomcat applications" />
 		<echo message=""/>
 	</target>
 	
@@ -70,7 +70,7 @@
 		</apply>
 	
 		<apply executable="java" parallel="false" failonerror="true">
-			<filelist dir="${src.dir}/js" files="main_container.js" />
+			<filelist dir="${src.dir}/js" files="main_container.js, Pakistan_container.js" />
 			<arg line="-jar" />	
 			<arg path="yuicompressor.jar" />
 			<srcfile />
