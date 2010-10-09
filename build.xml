@@ -50,10 +50,8 @@
 	</target>
 
 	<target name="js.minify">
-		<mkdir dir="${build.dir}" />
+		<mkdir dir="${build.dir}/js" />
 		<mkdir dir="${build.dir}/concatenated" />
-
-		<delete file="${src.dir}/js/*-min.js" />
 
 		<concat destfile="${build.dir}/concatenated/anotherearth-static.js">
 			<filelist dir="${src.dir}/js" files="license.js, Translator-1.0.1.js, ui.dropdownchecklist.js, jquery.bgiframe.min.js, anotherearth_classes.js, anotherearth_init.js" />
@@ -65,7 +63,7 @@
 			<arg path="yuicompressor.jar" />
 			<srcfile />
 			<arg line="-o" />
-			<mapper type="glob" from="*.js" to="${src.dir}/js/*-min.js" />
+			<mapper type="glob" from="*.js" to="${build.dir}/js/*-min.js" />
 			<targetfile/>
 		</apply>
 	
@@ -75,7 +73,7 @@
 			<arg path="yuicompressor.jar" />
 			<srcfile />
 			<arg line="-o" />
-			<mapper type="glob" from="*.js" to="${src.dir}/js/*-min.js" />
+			<mapper type="glob" from="*.js" to="${build.dir}/js/*-min.js" />
 			<targetfile/>
 		</apply>
 
@@ -83,11 +81,9 @@
 	</target>
 
 	<target name="css.minify">
-		<mkdir dir="${build.dir}" />
+		<mkdir dir="${build.dir}/css" />
 		<mkdir dir="${build.dir}/concatenated" />
 		
-		<delete file="${src.dir}/css/*-min.css" />
-
 		<concat destfile="${build.dir}/concatenated/anotherearth.css">
 			<filelist dir="${src.dir}/css" files="anotherearth.css, jquery-ui-1.7.2.custom.css, ui.dropdownchecklist.css" />
 		</concat>
@@ -99,7 +95,7 @@
 			<arg line="--line-break 0"/>
 			<srcfile/>
 			<arg line="-o"/>
-			<mapper type="glob" from="*.css" to="${src.dir}/css/*-min.css"/>
+			<mapper type="glob" from="*.css" to="${build.dir}/css/*-min.css"/>
 			<targetfile/>
 		</apply>
 		
@@ -107,7 +103,6 @@
 	</target>
 
 	<target name="build" depends="clean, css.minify, js.minify">
-		<mkdir dir="${build.dir}" />
 		<copy todir="${build.dir}" preservelastmodified="true">
 			<fileset dir="${src.dir}" id="not.license">
 				<include name="**/*.*" />
