@@ -6,14 +6,26 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" /> <!-- IE8 doesn't support iframes -->
 		<meta name="description" content="synchronize the movement of two Google Earths, displayed side by side, directly compare two parts of the planet, control the additional overlays added to each" />
 		<meta name="keywords" content="two earths, side by side comparison, synchronized movement, control layers, google earth" />
+
 		<title>anotherearth - compare two synchronizable views of the Earth</title>
+
 		<link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/themes/base/ui.all.css" />
 		<link rel="stylesheet" type="text/css" href="css/anotherearth-min.css" />
-		<script type="text/javascript" src="http://www.google.com/jsapi?key=ABQIAAAAXlB-hI7mbWiEzmErvxFCOxThONsl4T1EdVdA9qrIAKF3P4QumxQWOexr5JsDgGDMaaRvNXAQfDdeHg" charset="utf-8"></script
+		<!-- script inclusion order is significant -->
+		<!-- google APIs -->
+		<script type="text/javascript" src="http://www.google.com/jsapi?key=ABQIAAAAXlB-hI7mbWiEzmErvxFCOxThONsl4T1EdVdA9qrIAKF3P4QumxQWOexr5JsDgGDMaaRvNXAQfDdeHg" charset="utf-8"></script>
+		<script type="text/javascript">
+			google.load("maps",     "2");//solely for google.maps.Language
+			google.load("earth",    "1");
+			google.load("language", "1");
+			google.load("search",   "1");
+		</script>
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.min.js" charset="utf-8"></script>
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js" charset="utf-8"></script>
+
 		<script type="text/javascript" src="js/anotherearth-static-min.js" charset="utf-8"></script>
 		<script type="text/javascript" src="js/main_container-min.js" charset="utf-8"></script>
+
 		<link rel="icon" type="image/png" href="favicon.png" /><!-- W3C -->
 		<link rel="Shortcut Icon" href="favicon.ico" /><!-- IE7 -->
 		<link rel="icon" href="favicon.ico" type="image/x-icon" />

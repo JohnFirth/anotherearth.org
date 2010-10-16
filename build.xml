@@ -53,8 +53,38 @@
 		<mkdir dir="${build.dir}/js" />
 		<mkdir dir="${build.dir}/concatenated" />
 
-		<concat destfile="${build.dir}/concatenated/anotherearth-static.js">
-			<filelist dir="${src.dir}/js" files="license.js, Translator-1.0.1.js, ui.dropdownchecklist.js, jquery.bgiframe.min.js, anotherearth_classes.js, anotherearth_init.js" />
+		<concat destfile="${build.dir}/concatenated/anotherearth-static.js" fixlastline="yes">
+			<header trimleading="yes">
+				/*! Copyright 2010, John Firth. Licensed under BSD (see http://www.anotherearth.org/license.txt)
+				 * Incorporates:
+				 * Translator.js Copyright 2008 Ariel Fleischer.
+				 * jQuery.js Copyright 2010 John Resig.
+				 * jQuery-ui.js Copyright 2010 Copyright 2009 various authors (http://jqueryui.com/about) 
+				 * ui-dropdown-checklist.js Copyright 2008-2009 Adrian Tosca
+				 *
+				 * unminified files in js/
+				 */
+			</header>
+			<!-- must go first, as other classes are directly dependent upon them -->
+			<filelist dir="${src.dir}/js/org/anotherearth/util" files="ArrayList.js" /><!--treated as native class -->
+			<filelist dir="${src.dir}/js/org/anotherearth/util" files="Interface.js" /><!-- treated as native class -->
+			<filelist dir="${src.dir}/js/org/anotherearth/util" files="interface_definitions.js" /><!-- directly referenced -->
+
+			<fileset dir="${src.dir}/js">
+				<filename name="**/*.js" />
+				<not>
+					<filename name="**/*container.js" />
+				</not>
+				<not>
+					<filename name="**/ArrayList.js" />
+				</not>
+				<not>
+					<filename name="**/Interface.js" />
+				</not>
+				<not>
+					<filename name="**/interface_definitions.js" />
+				</not>
+			</fileset>
 		</concat>
 
 		<apply executable="java" parallel="false" failonerror="true">
@@ -68,7 +98,7 @@
 		</apply>
 	
 		<apply executable="java" parallel="false" failonerror="true">
-			<filelist dir="${src.dir}/js" files="main_container.js, Pakistan_container.js" />
+			<filelist dir="${src.dir}/js/org/anotherearth/" files="main_container.js, Pakistan_container.js" />
 			<arg line="-jar" />	
 			<arg path="yuicompressor.jar" />
 			<srcfile />
@@ -76,8 +106,9 @@
 			<mapper type="glob" from="*.js" to="${build.dir}/js/*-min.js" />
 			<targetfile/>
 		</apply>
-
+<!--
 		<delete dir="${build.dir}/concatenated" />
+-->
 	</target>
 
 	<target name="css.minify">

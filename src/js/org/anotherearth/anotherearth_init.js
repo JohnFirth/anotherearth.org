@@ -1,3 +1,8 @@
+//slight overhead checking and/or creating namespaces justified by removing dependency on script inclusion order
+var org;
+org = window.org || {};
+org.anotherearth = window.org.anotherearth || {};
+
 $(document).ready(function() {org.anotherearth.init();});
 
 org.anotherearth.init = function() {
@@ -8,13 +13,17 @@ org.anotherearth.init = function() {
 		var mapsIncompatibleMessageContainer = document.createElement('div');
 		$(mapsIncompatibleMessageContainer).addClass("ui-state-highlight").addClass("panel").addClass("ui-widget");
 		var mapsIncompatibleMessage = document.createElement('p');
-		mapsIncompatibleMessage.appendChild(document.createTextNode("Sorry; the combination of browser and operating system you are using is incompatible " +
-		                                                            "with the Google Earth plugin upon which this application relies."));
 		mapsIncompatibleMessageContainer.id = org.anotherearth.PLUGIN_INCOMPATIBILITY_MESSAGE_ID;
 		mapsIncompatibleMessageContainer.appendChild(mapsIncompatibleMessage);
 		$('body').append(mapsIncompatibleMessageContainer);
-		org.anotherearth.Translator.translatePage();
-	}
+		var incompatiblityMessageText = "Sorry; the combination of browser and operating system you are using is incompatible " +
+			                              "with the Google Earth plugin upon which this application relies.";
+		mapsIncompatibleMessage.appendChild(document.createTextNode(incompatiblityMessageText));
+		mapsIncompatibleMessageContainer.id = org.anotherearth.PLUGIN_INCOMPATIBILITY_MESSAGE_ID;
+		mapsIncompatibleMessageContainer.appendChild(mapsIncompatibleMessage);
+		$('body').append(mapsIncompatibleMessageContainer);
+		org.anotherearth.util.Translator.translatePage();
+	} 
 	else {
 		$('#' + org.anotherearth.PLAIN_HTML_MESSAGE_ID).remove();//removes plain HTML welcome message
 		var container = org.anotherearth.Container.getInstance();//instantiates objects, creating invisible GUI elements
@@ -58,6 +67,6 @@ org.anotherearth.init = function() {
 		container.getComponent('welcomePanel').show();
 		leftEarth.createEarthInstance();
 		rightEarth.createEarthInstance();
-		org.anotherearth.Translator.translatePage();
+		org.anotherearth.util.Translator.translatePage();
 	}
 };

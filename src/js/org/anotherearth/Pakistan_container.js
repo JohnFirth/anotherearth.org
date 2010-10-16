@@ -1,3 +1,8 @@
+//slight overhead checking and/or creating namespaces justified by removing dependency on script inclusion order
+var org;
+org = window.org || {};
+org.anotherearth = window.org.anotherearth || {};
+
 org.anotherearth.Container = (function() { //singleton with deferred instantiation.  Dependency injector - primarily to facilitate unit testing.
 	var uniqueInstance;
 
@@ -6,7 +11,7 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 		var ae 	 = org.anotherearth;
 		var body = $('body')[0];
 
-		var urlManager = org.anotherearth.URLManager;
+		var urlManager = ae.model.URLManager;
 		var initialLCameraProps = {};
 		var initialRCameraProps = {};
 		var initialLocks = {};
@@ -32,14 +37,14 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 		initialRCameraProps.tilt = 0;
 		initialRCameraProps.head = 0;
 
-		coms.welcomePanel = new ae.Panel(org.anotherearth.WELCOME_PANEL_BODY_ID,
-		                                 org.anotherearth.WELCOME_PANEL_HEADER_ID,
-		                                 org.anotherearth.WELCOME_PANEL_ID,
-		                                 'Indus river flooding, Pakistan',
-		                                 body,
-		                                 true,
-		                                 true,
-		                                 true);
+		coms.welcomePanel = new ae.view.Panel(ae.WELCOME_PANEL_BODY_ID,
+		                                     ae.WELCOME_PANEL_HEADER_ID,
+																				 ae.WELCOME_PANEL_ID,
+																				 'Indus river flooding, Pakistan',
+																				 body,
+																				 true,
+																				 true,
+																				 true);
 		var welcomeText = document.createElement('div');
 		welcomeText.innerHTML = '<p>The overlay on the right-hand Earth shows flooding of the Indus river in northern Pakistan ' +
 		                        'around 28 SHa`baan 1431 A.H./ 9 August 2010 A.D. (Imagery from <a href="http://earthobservatory.nasa.gov/IOTD/view.php?id=45343">NASA\'s Earth Observatory</a>.) ' +
@@ -53,25 +58,26 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 		                        'I\'ve attempted to convert the text.</p>';
 		
 		if (!$.support.leadingWhitespace) {//if is IE
-			welcomeText.innerHTML += '<p>For a significantly enhanced experience with this site, I recommend using the Firefox or Chrome browsers.</p>';
+			welcomeText.innerHTML += '<p id="IE_message">Sorry, but to ensure an optimal experience with this site, I recommend using the ' +
+			                         '<a href="http://www.mozilla.com">Mozilla Firefox</a> or <a href="http://www.google.com/chrome">Google Chrome</a> web browsers.</p>';
 		}
 
-		coms.welcomePanel.addChild(new org.anotherearth.MiscellaneousElement(welcomeText));
+		coms.welcomePanel.addChild(new ae.view.MiscellaneousElement(welcomeText));
 		google.language.getBranding('google_branding');
 		
 		//main MVC objects
-		coms.earthsManager    = new ae.EarthsManager();
-		coms.earthsController = new ae.EarthsController(coms.earthsManager, initialLocks); 
-		coms.leftEarth	      = new org.anotherearth.LockableEarth(org.anotherearth.L_EARTH_ID, coms.earthsController, initialLCameraProps);
-		coms.rightEarth       = new org.anotherearth.LockableEarth(org.anotherearth.R_EARTH_ID, coms.earthsController, initialRCameraProps);
-		coms.controlPanel     = new ae.ControlPanel(org.anotherearth.CP_BUTTONS_CONTAINER_ID,//TODO: consider using builder pattern
-		                                            org.anotherearth.CP_HEADER_ID,
-		                                            org.anotherearth.CP_ID,
-		                                            'Control Panel',
-		                                            body,
-		                                            true,
-		                                            true,
-		                                            false);
+		coms.earthsManager    = new ae.model.EarthsManager();
+		coms.earthsController = new ae.controller.EarthsController(coms.earthsManager, urlManager, initialLocks); 
+		coms.leftEarth	      = new ae.view.LockableEarth(ae.L_EARTH_ID, coms.earthsController, initialLCameraProps);
+		coms.rightEarth       = new ae.view.LockableEarth(ae.R_EARTH_ID, coms.earthsController, initialRCameraProps);
+		coms.controlPanel     = new ae.view.ControlPanel(ae.CP_BUTTONS_CONTAINER_ID,//TODO: consider using builder pattern
+																										 ae.CP_HEADER_ID,
+																										 ae.CP_ID,
+																										 'Control Panel',
+																										 body,
+																										 true,
+																										 true,
+		                                                 false);
 		coms.earthsController.setLeftEarth(coms.leftEarth);
 		coms.earthsController.setRightEarth(coms.rightEarth);
 		coms.earthsController.setControlPanel(coms.controlPanel);
@@ -81,49 +87,49 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 
 		/*comand objects*/
 			//locking checkboxes
-		coms.linkCreatorCommand = new ae.LinkCreatorCommand(coms.earthsController);
-		coms.toggleVerticalMovementLockCommand 	 = new ae.ToggleMovementLockCommand('vertical', coms.earthsController);
-		coms.toggleHorizontalMovementLockCommand = new ae.ToggleMovementLockCommand('horizontal', coms.earthsController);
-		coms.toggleTiltLockCommand    = new ae.ToggleMovementLockCommand('tilt', coms.earthsController);
-		coms.toggleHeadingLockCommand = new ae.ToggleMovementLockCommand('head', coms.earthsController);
+		coms.linkCreatorCommand = new ae.command.LinkCreatorCommand(coms.earthsController);
+		coms.toggleVerticalMovementLockCommand 	 = new ae.command.ToggleMovementLockCommand('vertical', coms.earthsController);
+		coms.toggleHorizontalMovementLockCommand = new ae.command.ToggleMovementLockCommand('horizontal', coms.earthsController);
+		coms.toggleTiltLockCommand    = new ae.command.ToggleMovementLockCommand('tilt', coms.earthsController);
+		coms.toggleHeadingLockCommand = new ae.command.ToggleMovementLockCommand('head', coms.earthsController);
 		
 			//buttons
-		coms.undoCommand = new ae.UndoCommand(coms.earthsController);
-		coms.redoCommand = new ae.RedoCommand(coms.earthsController);
-		coms.equateCameraAltitudesCommand = new ae.EquateCameraAltitudesCommand(coms.earthsController);
-		coms.equateCameraLatsLngsCommand  = new ae.EquateCameraLatsLngsCommand(coms.earthsController);
-		coms.equateCameraTiltsCommand     = new ae.EquateCameraTiltsCommand(coms.earthsController);
-		coms.equateCameraHeadingsCommand  = new ae.EquateCameraHeadingsCommand(coms.earthsController);
+		coms.undoCommand = new ae.command.UndoCommand(coms.earthsController);
+		coms.redoCommand = new ae.command.RedoCommand(coms.earthsController);
+		coms.equateCameraAltitudesCommand = new ae.command.EquateCameraAltitudesCommand(coms.earthsController);
+		coms.equateCameraLatsLngsCommand  = new ae.command.EquateCameraLatsLngsCommand(coms.earthsController);
+		coms.equateCameraTiltsCommand     = new ae.command.EquateCameraTiltsCommand(coms.earthsController);
+		coms.equateCameraHeadingsCommand  = new ae.command.EquateCameraHeadingsCommand(coms.earthsController);
 
 			//select box
-		coms.toggleEarthExtraCommand = new ae.ToggleEarthExtraCommand(coms.earthsController);
+		coms.toggleEarthExtraCommand = new ae.command.ToggleEarthExtraCommand(coms.earthsController);
 
 			//radio buttons
-		coms.toggleDonorEarthCommand = new ae.ToggleDonorEarthCommand(coms.earthsController);
+		coms.toggleDonorEarthCommand = new ae.command.ToggleDonorEarthCommand(coms.earthsController);
 
 		//strategy objects
-		coms.linkCreatingButtonUpdateStrategy = new ae.LinkCreatingButtonUpdateStrategy();
-		coms.undoButtonUpdateStrategy         = new ae.UndoButtonUpdateStrategy();
-		coms.redoButtonUpdateStrategy         = new ae.RedoButtonUpdateStrategy();
-		coms.equateCameraLatsLngsStrategy     = new ae.EquateLatLngsButtonStrategy();
-		coms.equateCameraAltitudesStrategy    = new ae.EquateAltitudesButtonStrategy();
-		coms.equateCameraTiltsStrategy        = new ae.EquateTiltsButtonStrategy();
-		coms.equateCameraHeadingsStrategy     = new ae.EquateHeadingsButtonStrategy();
+		coms.linkCreatingButtonUpdateStrategy = new ae.view.LinkCreatingButtonUpdateStrategy();
+		coms.undoButtonUpdateStrategy         = new ae.view.UndoButtonUpdateStrategy();
+		coms.redoButtonUpdateStrategy         = new ae.view.RedoButtonUpdateStrategy();
+		coms.equateCameraLatsLngsStrategy     = new ae.view.EquateLatLngsButtonStrategy();
+		coms.equateCameraAltitudesStrategy    = new ae.view.EquateAltitudesButtonStrategy();
+		coms.equateCameraTiltsStrategy        = new ae.view.EquateTiltsButtonStrategy();
+		coms.equateCameraHeadingsStrategy     = new ae.view.EquateHeadingsButtonStrategy();
 		
 		//gui objects
 			//checkboxes
-		coms.altLockingCheckbox     = new ae.TwoEarthsCheckbox("altitudes",
-		                                                      org.anotherearth.CP_ALTITUDE_LOCK_CHECKBOX_ID,
-		                                                      coms.earthsManager);
-		coms.latLngLockingCheckbox  = new ae.TwoEarthsCheckbox("latitudes and longitudes",
-		                                                      org.anotherearth.CP_VIEW_CENTER_LOCK_CHECKBOX_ID,
-		                                                      coms.earthsManager);
-		coms.tiltLockingCheckbox    = new ae.TwoEarthsCheckbox("tilts",
-		                                                      org.anotherearth.CP_TILT_LOCK_CHECKBOX_ID,
-		                                                      coms.earthsManager);
-		coms.headingLockingCheckbox = new ae.TwoEarthsCheckbox("headings",
-		                                                       org.anotherearth.CP_HEAD_LOCK_CHECKBOX_ID,
-		                                                       coms.earthsManager);
+		coms.altLockingCheckbox     = new ae.view.TwoEarthsCheckbox("altitudes",
+																																ae.CP_ALTITUDE_LOCK_CHECKBOX_ID,
+																																coms.earthsManager);
+		coms.latLngLockingCheckbox  = new ae.view.TwoEarthsCheckbox("latitudes and longitudes",
+																																ae.CP_VIEW_CENTER_LOCK_CHECKBOX_ID,
+																																coms.earthsManager);
+		coms.tiltLockingCheckbox    = new ae.view.TwoEarthsCheckbox("tilts",
+																																ae.CP_TILT_LOCK_CHECKBOX_ID,
+																																coms.earthsManager);
+		coms.headingLockingCheckbox = new ae.view.TwoEarthsCheckbox("headings",
+																																ae.CP_HEAD_LOCK_CHECKBOX_ID,
+																																coms.earthsManager);
 
 		coms.altLockingCheckbox.addClickEventListener(coms.toggleVerticalMovementLockCommand);
 		coms.latLngLockingCheckbox.addClickEventListener(coms.toggleHorizontalMovementLockCommand);
@@ -131,49 +137,49 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 		coms.headingLockingCheckbox.addClickEventListener(coms.toggleHeadingLockCommand);
 
 		//buttons
-		coms.undoButton = new ae.TwoEarthsButton('undo', org.anotherearth.CP_UNDO_BUTTON_ID, coms.earthsManager);
+		coms.undoButton = new ae.view.TwoEarthsButton('undo', ae.CP_UNDO_BUTTON_ID, coms.earthsManager);
 		coms.undoButton.addClickEventListener(coms.undoCommand);
 		coms.undoButton.setUndoRedoUpdateStrategy(coms.undoButtonUpdateStrategy);
 		coms.undoButton.setNewEarthPropsUpdateStrategy(coms.undoButtonUpdateStrategy);
 		coms.undoButton.setIsEnabled(false);
 
-		coms.redoButton = new ae.TwoEarthsButton('redo', org.anotherearth.CP_REDO_BUTTON_ID, coms.earthsManager);
+		coms.redoButton = new ae.view.TwoEarthsButton('redo', ae.CP_REDO_BUTTON_ID, coms.earthsManager);
 		coms.redoButton.addClickEventListener(coms.redoCommand);
 		coms.redoButton.setUndoRedoUpdateStrategy(coms.redoButtonUpdateStrategy);
 		coms.redoButton.setNewEarthPropsUpdateStrategy(coms.redoButtonUpdateStrategy);
 		coms.redoButton.setIsEnabled(false);
 		
-		coms.equateCameraLatsLngsButton = new ae.TwoEarthsButton("latitude and longitude",
-		                                                         org.anotherearth.EQUATE_CAM_LATS_LNGS_BUTTON_ID,
+		coms.equateCameraLatsLngsButton = new ae.view.TwoEarthsButton("latitude and longitude",
+		                                                         ae.EQUATE_CAM_LATS_LNGS_BUTTON_ID,
 		                                                         coms.earthsManager);
 		coms.equateCameraLatsLngsButton.addClickEventListener(coms.equateCameraLatsLngsCommand);
 		coms.equateCameraLatsLngsButton.setUndoRedoUpdateStrategy(coms.equateCameraLatsLngsStrategy);
 		coms.equateCameraLatsLngsButton.setNewEarthPropsUpdateStrategy(coms.equateCameraLatsLngsStrategy);
 		
-		coms.equateCameraAltitudesButton = new ae.TwoEarthsButton('altitude',
-		                                                          org.anotherearth.EQUATE_CAM_ALTITUDES_BUTTON_ID,
+		coms.equateCameraAltitudesButton = new ae.view.TwoEarthsButton('altitude',
+		                                                          ae.EQUATE_CAM_ALTITUDES_BUTTON_ID,
 		                                                          coms.earthsManager);
 		coms.equateCameraAltitudesButton.addClickEventListener(coms.equateCameraAltitudesCommand);
 		coms.equateCameraAltitudesButton.setUndoRedoUpdateStrategy(coms.equateCameraAltitudesStrategy);
 		coms.equateCameraAltitudesButton.setNewEarthPropsUpdateStrategy(coms.equateCameraAltitudesStrategy);
 
-		coms.equateCameraTiltsButton = new ae.TwoEarthsButton('tilt',
-		                                                      org.anotherearth.EQUATE_CAM_TILTS_BUTTON_ID,
+		coms.equateCameraTiltsButton = new ae.view.TwoEarthsButton('tilt',
+		                                                      ae.EQUATE_CAM_TILTS_BUTTON_ID,
 		                                                      coms.earthsManager);
 		coms.equateCameraTiltsButton.addClickEventListener(coms.equateCameraTiltsCommand);
 		coms.equateCameraTiltsButton.setUndoRedoUpdateStrategy(coms.equateCameraTiltsStrategy);
 		coms.equateCameraTiltsButton.setNewEarthPropsUpdateStrategy(coms.equateCameraTiltsStrategy);
 		
-		coms.equateCameraHeadingsButton = new ae.TwoEarthsButton('heading',
-		                                                         org.anotherearth.EQUATE_CAM_HEADINGS_BUTTON_ID,
+		coms.equateCameraHeadingsButton = new ae.view.TwoEarthsButton('heading',
+		                                                         ae.EQUATE_CAM_HEADINGS_BUTTON_ID,
 		                                                         coms.earthsManager);
 		coms.equateCameraHeadingsButton.addClickEventListener(coms.equateCameraHeadingsCommand);
 		coms.equateCameraHeadingsButton.setUndoRedoUpdateStrategy(coms.equateCameraHeadingsStrategy);
 		coms.equateCameraHeadingsButton.setNewEarthPropsUpdateStrategy(coms.equateCameraHeadingsStrategy);
 
-		coms.linkCreatorButton = new ae.LinkCreatorButton("create link",
-		                                                  org.anotherearth.CP_LINK_CREATOR_BUTTON_ID,
-		                                                  org.anotherearth.CP_LINK_BOX_ID,
+		coms.linkCreatorButton = new ae.view.LinkCreatorButton("create link",
+		                                                  ae.CP_LINK_CREATOR_BUTTON_ID,
+		                                                  ae.CP_LINK_BOX_ID,
 		                                                  coms.earthsManager);
 		coms.linkCreatorButton.setUndoRedoUpdateStrategy(coms.linkCreatingButtonUpdateStrategy);
 		coms.linkCreatorButton.setNewEarthPropsUpdateStrategy(coms.linkCreatingButtonUpdateStrategy);
@@ -195,7 +201,7 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 		rightCameraRadios.name  = 'donor_camera_selector'; 
 		rightCameraRadios.label = 'from right camera';
 		donorRadios.push(rightCameraRadios);
-		coms.donorRadioButtons = new ae.RadioButtons(donorRadios, 'donor_camera_selector');
+		coms.donorRadioButtons = new ae.view.RadioButtons(donorRadios, 'donor_camera_selector');
 		coms.donorRadioButtons.addClickEventListener(coms.toggleDonorEarthCommand);
 
 		//select box
@@ -241,27 +247,27 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 		                     //$.extend(true, {}, atmosphereOption),
 		                     $.extend(true, {}, latLngGridlinesOption)];
 		
-		coms.LEarthOptionSelector = new ae.SelectBox(LEarthOptions, 1, 'left Earth',  org.anotherearth.CP_L_EARTH_EXTRAS_SELECTOR_ID, true);
-		coms.REarthOptionSelector = new ae.SelectBox(REarthOptions, 1, 'right Earth', org.anotherearth.CP_R_EARTH_EXTRAS_SELECTOR_ID, true);
+		coms.LEarthOptionSelector = new ae.view.SelectBox(LEarthOptions, 1, 'left Earth',  ae.CP_L_EARTH_EXTRAS_SELECTOR_ID, true);
+		coms.REarthOptionSelector = new ae.view.SelectBox(REarthOptions, 1, 'right Earth', ae.CP_R_EARTH_EXTRAS_SELECTOR_ID, true);
 
 		coms.LEarthOptionSelector.addClickEventListener(coms.toggleEarthExtraCommand);
 		coms.REarthOptionSelector.addClickEventListener(coms.toggleEarthExtraCommand);
 		
 		//search boxes
-		coms.leftEarthSearch  = new org.anotherearth.SearchBox(coms.leftEarth,  coms.earthsController, org.anotherearth.L_EARTH_SEARCH_BOX_ID, 'left Earth');
-		coms.rightEarthSearch = new org.anotherearth.SearchBox(coms.rightEarth, coms.earthsController, org.anotherearth.R_EARTH_SEARCH_BOX_ID, 'right Earth');
+		coms.leftEarthSearch  = new ae.view.SearchBox(coms.leftEarth,  coms.earthsController, ae.L_EARTH_SEARCH_BOX_ID, 'left Earth');
+		coms.rightEarthSearch = new ae.view.SearchBox(coms.rightEarth, coms.earthsController, ae.R_EARTH_SEARCH_BOX_ID, 'right Earth');
 
 		//control panel fieldsets
-		coms.checkBoxSubPanel           = new ae.ShrinkableSubPanel("synchronize camera movement", org.anotherearth.CP_CAMERA_PROPERTY_LOCKING_SUB_PANEL_ID);	
-		coms.cameraPropCopyingSubPanel  = new ae.ShrinkableSubPanel("copy camera coordinates",     org.anotherearth.CP_CAMERA_PROPERTY_COPYING_SUB_PANEL_ID);	
-		coms.earthOptionsSubPanel       = new ae.ShrinkableSubPanel("Earth overlays",              org.anotherearth.CP_EARTH_OPTIONS_SUB_PANEL_ID);	
-		coms.searchBoxSubPanel          = new ae.ShrinkableSubPanel("search",                      org.anotherearth.CP_SEARCH_BOX_SUB_PANEL_ID);	
+		coms.checkBoxSubPanel           = new ae.view.ShrinkableSubPanel("synchronize camera movement", ae.CP_CAMERA_PROPERTY_LOCKING_SUB_PANEL_ID);	
+		coms.cameraPropCopyingSubPanel  = new ae.view.ShrinkableSubPanel("copy camera coordinates",     ae.CP_CAMERA_PROPERTY_COPYING_SUB_PANEL_ID);	
+		coms.earthOptionsSubPanel       = new ae.view.ShrinkableSubPanel("Earth overlays",              ae.CP_EARTH_OPTIONS_SUB_PANEL_ID);	
+		coms.searchBoxSubPanel          = new ae.view.ShrinkableSubPanel("search",                      ae.CP_SEARCH_BOX_SUB_PANEL_ID);	
 		var googleBranding = document.createElement('span');
 		googleBranding.id = 'google_search_branding';
 
 		$(coms.searchBoxSubPanel.getContainingElement()).find('.sub_panel_title').append(googleBranding);
 
-		coms.miscellaneousSubPanel = new ae.ShrinkableSubPanel("undo/redo", org.anotherearth.CP_MISC_OPTIONS_SUB_PANEL_ID);	
+		coms.miscellaneousSubPanel = new ae.view.ShrinkableSubPanel("undo/redo", ae.CP_MISC_OPTIONS_SUB_PANEL_ID);	
 
 		var getLoadedEarths = (function() {
 			var loadedEarths = 0;
@@ -283,8 +289,8 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 				coms.controlPanel.performNewEarthPropsUpdate();
 				coms.controlPanel.show();
 				//need to set these widths in pixels once the elements have been created to avoid jerkiness and resizing with subpanel and panel shrinking (jQuery flaws)
-				$('#' + org.anotherearth.CP_ID + ' button').width($('#' + org.anotherearth.CP_ID + ' button').width());
-				$('#' + org.anotherearth.CP_ID).width($('#' + org.anotherearth.CP_ID).width());
+				$('#' + ae.CP_ID + ' button').width($('#' + ae.CP_ID + ' button').width());
+				$('#' + ae.CP_ID).width($('#' + ae.CP_ID).width());
 				var viewportHeight = window.innerHeight ? window.innerHeight : $(window).height();
 				var controlPanelElement = coms.controlPanel.getContainingElement();
 				var panelTopOffset = parseInt(($(controlPanelElement).css('top')).replace(/(\d+)px/, "$1"), 10);

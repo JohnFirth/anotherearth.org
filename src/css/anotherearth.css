@@ -243,6 +243,10 @@ h1 {
 	left: 30px;	
 }
 
+#IE_message {
+	color: red;
+}
+
 .gsc-localResult .gsc-result {
 	border-bottom: 1px solid #E9E9E9;
 	padding-bottom: 2px;
