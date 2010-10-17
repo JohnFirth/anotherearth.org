@@ -48,7 +48,8 @@ org.anotherearth.view.Panel = function(panelBodyId, panelHeaderId, panelId, pane
 		$(panelDragHandle).bind('focus blur', function() {
 			$(this).toggleClass('ui-state-focus');
 		});
-		$(panel).draggable({handle: panelDragHandle,
+		$(panel).draggable({containment: 'window',//should never use this, as containment set on mouse down, but seems that occasionally it is necessary
+		                    handle: panelDragHandle,
 												scroll: false,
 		                    start:  function() {
 	                      	self.createIterator();              //out of the window by expansion of the panel - in this case, though, does
