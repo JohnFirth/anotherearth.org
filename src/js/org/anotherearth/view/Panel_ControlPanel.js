@@ -1,7 +1,7 @@
 //file contains two classes, necessary as ControlPanel composed with Panel 
 
 //slight overhead checking and/or creating namespaces justified by removing dependency on script inclusion order
-var org;
+
 org = window.org || {};
 org.anotherearth = window.org.anotherearth || {};
 org.anotherearth.view = window.org.anotherearth.view || {};
@@ -26,8 +26,6 @@ org.anotherearth.view.Panel = function(panelBodyId, panelHeaderId, panelId, pane
 	//private methods
 	var _setDraggableContainment = function(containment) {
 		$(panel).draggable('option', 'containment', containment);
-		console.log($(panel).draggable('option', 'containment'));
-		console.log($(panel).height());
 	}
 
 	var _createDragHandle = function() {
@@ -39,13 +37,12 @@ org.anotherearth.view.Panel = function(panelBodyId, panelHeaderId, panelId, pane
 		$(panelDragHandle).bind('mouseleave mouseenter', function() {
 			$(this).toggleClass('ui-state-hover');
 		});
-		$(panelDragHandle).bind('mousedown', function(e) {
-			var panelOffset  = $(panel).offset();
-			var windowWidth  = $(window).width();
-			var windowHeight = $(window).height();
-			var widthContainment  = windowWidth  - e.pageX + panelOffset.left - 10;
-			var heightContainment = windowHeight - e.pageY + panelOffset.top  - 10;
-			//setting confinement here works whereas setting it with draggable.start() does not
+		$(panelDragHandle).bind('mousedown', function() {
+			var panelOffset       = $(panel).offset();//the sum of these offsets can potentially change
+			var dragHandleOffset  = $(panelDragHandle).offset();  
+			var widthContainment  = $(window).width()   + panelOffset.left - dragHandleOffset.left - $(panelDragHandle).width()  - 10;
+			var heightContainment = $(window).height()  + panelOffset.top  - dragHandleOffset.top  - $(panelDragHandle).height() - 10;
+			//setting confinement here works, whereas setting it with draggable.start() does not
 		  _setDraggableContainment([0, 0, widthContainment, heightContainment] );
 		});
 		$(panelDragHandle).bind('focus blur', function() {

@@ -93,7 +93,7 @@
 			<arg path="yuicompressor.jar" />
 			<srcfile />
 			<arg line="-o" />
-			<mapper type="glob" from="*.js" to="${build.dir}/js/*-min.js" />
+			<mapper type="glob" from="*.js" to="${build.dir}/js/*-min-2.js" />
 			<targetfile/>
 		</apply>
 	
@@ -103,12 +103,10 @@
 			<arg path="yuicompressor.jar" />
 			<srcfile />
 			<arg line="-o" />
-			<mapper type="glob" from="*.js" to="${build.dir}/js/*-min.js" />
+			<mapper type="glob" from="*.js" to="${build.dir}/js/*-min-2.js" />
 			<targetfile/>
 		</apply>
-<!--
 		<delete dir="${build.dir}/concatenated" />
--->
 	</target>
 
 	<target name="css.minify">
@@ -126,7 +124,7 @@
 			<arg line="--line-break 0"/>
 			<srcfile/>
 			<arg line="-o"/>
-			<mapper type="glob" from="*.css" to="${build.dir}/css/*-min.css"/>
+			<mapper type="glob" from="*.css" to="${build.dir}/css/*-min-2.css"/>
 			<targetfile/>
 		</apply>
 		

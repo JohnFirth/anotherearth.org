@@ -1,7 +1,7 @@
 //necessarily three classes in this file, as the latter two classes are both composed of one of the preceding classes
 
 //slight overhead checking and/or creating namespaces justified by removing dependency on script inclusion order
-var org;
+
 org = window.org || {};
 org.anotherearth = window.org.anotherearth || {};
 org.anotherearth.view = window.org.anotherearth.view || {};

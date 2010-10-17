@@ -1,5 +1,5 @@
 //slight overhead checking and/or creating namespaces justified by removing dependency on script inclusion order
-var org;
+
 org = window.org || {};
 org.anotherearth = window.org.anotherearth || {};
 
@@ -53,7 +53,8 @@ org.anotherearth.init = function() {
 		//create earths and canvases
 		var leftEarth  = container.getComponent('leftEarth');
 		var rightEarth = container.getComponent('rightEarth');
-
+	
+		//FIXME why is this here?
 		var _canvasResizer = function() {
 			var viewportWidth = $(window).width(); 
 			var viewportHeight = window.innerHeight ? window.innerHeight : $(window).height(); //height finding complicated by Opera 9 workaround

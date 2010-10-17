@@ -1,4 +1,4 @@
-var org;
+
 org = window.org || {};
 org.anotherearth = window.org.anotherearth || {};
 

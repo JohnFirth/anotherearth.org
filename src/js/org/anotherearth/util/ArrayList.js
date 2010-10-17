@@ -1,6 +1,6 @@
 //This file must typically be included first, as the intention is that other classes reference it as through it were a native language entity
 //slight overhead checking and/or creating namespaces justified by removing dependency on script inclusion order
-var org;
+
 org = window.org || {};
 org.anotherearth = window.org.anotherearth || {};
 org.anotherearth.util = window.org.anotherearth.util || {};

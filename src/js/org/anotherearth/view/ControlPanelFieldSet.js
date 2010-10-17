@@ -1,6 +1,6 @@
 //slight overhead checking and/or creating namespaces justified by removing dependency on script inclusion order
 /* not currently in use
-var org;
+
 org = window.org || {};
 org.anotherearth = window.org.anotherearth || {};
 org.anotherearth.view = window.org.anotherearth.view || {};
