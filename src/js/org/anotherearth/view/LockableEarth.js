@@ -243,4 +243,4 @@ org.anotherearth.view.LockableEarth = function(canvasDivId, earthsController, in
 
 	//constructor
 	_createEarthCanvas();
-}
+};

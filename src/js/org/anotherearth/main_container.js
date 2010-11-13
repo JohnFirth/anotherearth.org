@@ -116,17 +116,17 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 		//gui objects
 			//checkboxes
 		coms.altLockingCheckbox     = new ae.view.TwoEarthsCheckbox("altitudes",
-																																ae.CP_ALTITUDE_LOCK_CHECKBOX_ID,
-																																coms.earthsManager);
+																	ae.CP_ALTITUDE_LOCK_CHECKBOX_ID,
+																	coms.earthsManager);
 		coms.latLngLockingCheckbox  = new ae.view.TwoEarthsCheckbox("latitudes and longitudes",
-																																ae.CP_VIEW_CENTER_LOCK_CHECKBOX_ID,
-																																coms.earthsManager);
+																	ae.CP_VIEW_CENTER_LOCK_CHECKBOX_ID,
+																	coms.earthsManager);
 		coms.tiltLockingCheckbox    = new ae.view.TwoEarthsCheckbox("tilts",
-																																ae.CP_TILT_LOCK_CHECKBOX_ID,
-																																coms.earthsManager);
+																	ae.CP_TILT_LOCK_CHECKBOX_ID,
+																	coms.earthsManager);
 		coms.headingLockingCheckbox = new ae.view.TwoEarthsCheckbox("headings",
-																																ae.CP_HEAD_LOCK_CHECKBOX_ID,
-																																coms.earthsManager);
+																	ae.CP_HEAD_LOCK_CHECKBOX_ID,
+																	coms.earthsManager);
 
 		coms.altLockingCheckbox.addClickEventListener(coms.toggleVerticalMovementLockCommand);
 		coms.latLngLockingCheckbox.addClickEventListener(coms.toggleHorizontalMovementLockCommand);
@@ -147,37 +147,37 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 		coms.redoButton.setIsEnabled(false);
 		
 		coms.equateCameraLatsLngsButton = new ae.view.TwoEarthsButton("latitude and longitude",
-		                                                         ae.EQUATE_CAM_LATS_LNGS_BUTTON_ID,
-		                                                         coms.earthsManager);
+		                                                              ae.EQUATE_CAM_LATS_LNGS_BUTTON_ID,
+		                                                              coms.earthsManager);
 		coms.equateCameraLatsLngsButton.addClickEventListener(coms.equateCameraLatsLngsCommand);
 		coms.equateCameraLatsLngsButton.setUndoRedoUpdateStrategy(coms.equateCameraLatsLngsStrategy);
 		coms.equateCameraLatsLngsButton.setNewEarthPropsUpdateStrategy(coms.equateCameraLatsLngsStrategy);
 		
 		coms.equateCameraAltitudesButton = new ae.view.TwoEarthsButton('altitude',
-		                                                          ae.EQUATE_CAM_ALTITUDES_BUTTON_ID,
-		                                                          coms.earthsManager);
+		                                                               ae.EQUATE_CAM_ALTITUDES_BUTTON_ID,
+		                                                               coms.earthsManager);
 		coms.equateCameraAltitudesButton.addClickEventListener(coms.equateCameraAltitudesCommand);
 		coms.equateCameraAltitudesButton.setUndoRedoUpdateStrategy(coms.equateCameraAltitudesStrategy);
 		coms.equateCameraAltitudesButton.setNewEarthPropsUpdateStrategy(coms.equateCameraAltitudesStrategy);
 
 		coms.equateCameraTiltsButton = new ae.view.TwoEarthsButton('tilt',
-		                                                      ae.EQUATE_CAM_TILTS_BUTTON_ID,
-		                                                      coms.earthsManager);
+		                                                           ae.EQUATE_CAM_TILTS_BUTTON_ID,
+		                                                           coms.earthsManager);
 		coms.equateCameraTiltsButton.addClickEventListener(coms.equateCameraTiltsCommand);
 		coms.equateCameraTiltsButton.setUndoRedoUpdateStrategy(coms.equateCameraTiltsStrategy);
 		coms.equateCameraTiltsButton.setNewEarthPropsUpdateStrategy(coms.equateCameraTiltsStrategy);
 		
 		coms.equateCameraHeadingsButton = new ae.view.TwoEarthsButton('heading',
-		                                                         ae.EQUATE_CAM_HEADINGS_BUTTON_ID,
-		                                                         coms.earthsManager);
+		                                                              ae.EQUATE_CAM_HEADINGS_BUTTON_ID,
+		                                                              coms.earthsManager);
 		coms.equateCameraHeadingsButton.addClickEventListener(coms.equateCameraHeadingsCommand);
 		coms.equateCameraHeadingsButton.setUndoRedoUpdateStrategy(coms.equateCameraHeadingsStrategy);
 		coms.equateCameraHeadingsButton.setNewEarthPropsUpdateStrategy(coms.equateCameraHeadingsStrategy);
 
 		coms.linkCreatorButton = new ae.view.LinkCreatorButton("create link",
-		                                                  ae.CP_LINK_CREATOR_BUTTON_ID,
-		                                                  ae.CP_LINK_BOX_ID,
-		                                                  coms.earthsManager);
+		                                                       ae.CP_LINK_CREATOR_BUTTON_ID,
+		                                                       ae.CP_LINK_BOX_ID,
+		                                                       coms.earthsManager);
 		coms.linkCreatorButton.setUndoRedoUpdateStrategy(coms.linkCreatingButtonUpdateStrategy);
 		coms.linkCreatorButton.setNewEarthPropsUpdateStrategy(coms.linkCreatingButtonUpdateStrategy);
 		coms.linkCreatorButton.setIsEnabled(true);
@@ -209,7 +209,11 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 		var terrainOption         = {};
 		var sunOption             = {};
 		var atmosphereOption      = {};
+		var timeOption            = {};
 		var latLngGridlinesOption = {};
+		
+		//FIXME options should be an enum equivalent within LockableEarth
+        //TODO make scale bars and status bar selectable
 		borderOption.text  = "borders and towns";
 		borderOption.value = "borders";
 		hiResBuildingsOption.text  = "hi-res buildings";
@@ -226,48 +230,53 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 		atmosphereOption.value = "atmosphere";
 		latLngGridlinesOption.text  = "grid";
 		latLngGridlinesOption.value = "grid";
+		timeOption.text  = "time";
+		timeOption.value = "time";
 		var LEarthOptions = [borderOption,
-												 hiResBuildingsOption,
-												 loResBuildingsOption,
-												 roadsOption,
-												 terrainOption,
-												 //sunOption,TODO: reinstate when search boxes are part of (accordian) control panel
-												 //atmosphereOption,TODO: reinstate when checked on by default
-												 //TODO: make scale bars and status bar selectable
-												 latLngGridlinesOption];
+		                     hiResBuildingsOption,
+		                     loResBuildingsOption,
+		                     latLngGridlinesOption,
+		                     roadsOption,
+		                     sunOption,
+		                     terrainOption,
+		                     timeOption
+		                     //atmosphereOption//TODO: no one's going to be turning this off, most likely
+		                     ];
 		var REarthOptions = [$.extend(true, {}, borderOption),           //deep copies of the option objects
 		                     $.extend(true, {}, hiResBuildingsOption),
-                         $.extend(true, {}, loResBuildingsOption),
+                             $.extend(true, {}, loResBuildingsOption),
+		                     $.extend(true, {}, latLngGridlinesOption),
 		                     $.extend(true, {}, roadsOption),
+                             $.extend(true, {}, sunOption),
 		                     $.extend(true, {}, terrainOption),
-                         //$.extend(true, {}, sunOption),
-		                     //$.extend(true, {}, atmosphereOption),
-		                     $.extend(true, {}, latLngGridlinesOption)];
+                             $.extend(true, {}, timeOption)
+		                     //$.extend(true, {}, atmosphereOption)
+                             ];
 		
 		coms.LEarthOptionSelector = new ae.view.SelectBox(LEarthOptions,
-																										  1,
-																										  'left Earth',
-																										  ae.CP_L_EARTH_EXTRAS_SELECTOR_ID,
-																										  true);
+		                                                  1,
+		                                                  'left Earth',
+		                                                  ae.CP_L_EARTH_EXTRAS_SELECTOR_ID,
+		                                                  true);
 		coms.REarthOptionSelector = new ae.view.SelectBox(REarthOptions,
-																										  1,
-																										  'right Earth',
-																										  ae.CP_R_EARTH_EXTRAS_SELECTOR_ID,
-																										  true);
+		                                                  1,
+		                                                  'right Earth',
+		                                                  ae.CP_R_EARTH_EXTRAS_SELECTOR_ID,
+		                                                  true);
 
 		coms.LEarthOptionSelector.addClickEventListener(coms.toggleEarthExtraCommand);
 		coms.REarthOptionSelector.addClickEventListener(coms.toggleEarthExtraCommand);
 		
 		//search boxes
-		coms.leftEarthSearch  = new ae.view.SearchBox(coms.leftEarth, coms.earthsController, ae.L_EARTH_SEARCH_BOX_ID, 'left Earth');
+		coms.leftEarthSearch  = new ae.view.SearchBox(coms.leftEarth,  coms.earthsController, ae.L_EARTH_SEARCH_BOX_ID, 'left Earth');
 		coms.rightEarthSearch = new ae.view.SearchBox(coms.rightEarth, coms.earthsController, ae.R_EARTH_SEARCH_BOX_ID, 'right Earth');
 
 		//control panel fieldsets
 		coms.checkBoxSubPanel           = new ae.view.ShrinkableSubPanel("synchronize camera movement",
-																																		 ae.CP_CAMERA_PROPERTY_LOCKING_SUB_PANEL_ID);	
+		                                                                 ae.CP_CAMERA_PROPERTY_LOCKING_SUB_PANEL_ID);	
 		coms.cameraPropCopyingSubPanel  = new ae.view.ShrinkableSubPanel("copy camera coordinates",
 		                                                                 ae.CP_CAMERA_PROPERTY_COPYING_SUB_PANEL_ID);	
-		coms.earthOptionsSubPanel       = new ae.view.ShrinkableSubPanel("Earth overlays",
+		coms.earthOptionsSubPanel       = new ae.view.ShrinkableSubPanel("Earth extras",
 		                                                                 ae.CP_EARTH_OPTIONS_SUB_PANEL_ID);	
 		coms.searchBoxSubPanel          = new ae.view.ShrinkableSubPanel("search",
 		                                                                 ae.CP_SEARCH_BOX_SUB_PANEL_ID);	
@@ -288,6 +297,8 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 
 		var responseToEarthFullyLoading = function() {
 			if (getLoadedEarths() === 2) {
+				coms.LEarthOptionSelector.setIsSelected(coms.LEarthOptionSelector.getIndexOfOption("time"), true);
+				coms.REarthOptionSelector.setIsSelected(coms.REarthOptionSelector.getIndexOfOption("time"), true);
 				coms.altLockingCheckbox.setIsChecked(initialLocks.alt);
 				coms.tiltLockingCheckbox.setIsChecked(initialLocks.tilt);
 				coms.latLngLockingCheckbox.setIsChecked(initialLocks.latLng);

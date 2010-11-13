@@ -1,0 +1,5 @@
+EarthsControllerTest = TestCase("EarthsControllerTest");
+
+EarthsControllerTest.prototype.testSaveCameraProperties = function() {
+	var earthsController = new org.anotherearth.controller.EarthsController();
+}

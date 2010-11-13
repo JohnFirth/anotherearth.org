@@ -86,7 +86,7 @@ org.anotherearth.view.ShrinkableSubPanel = function(title, subPanelId) {
 	this.show = function() {
 		var _showShrinkingIcon = function() {
 			shrinkingIcon.style.visibility = 'visible';
-		}
+		};
 		subPanel.style.display = 'block';
 		shrinkingIcon.style.visibility = 'hidden';
 		setTimeout(_showShrinkingIcon, 70);//bit of a hack to stop icons appearing before the rest of the (sliding) panel

@@ -124,7 +124,7 @@ org.anotherearth.view.RadioButtons = function(radioButtons, groupId) {
 	
 	//constructor
 	this.createGUIElements();
-	onClickCommand = function() { this.execute = function() {} };
+	onClickCommand = function() { this.execute = function() {}; };
 	undoRedoUpdateStrategy      = {execute: function(button) {} };
 	newEarthPropsUpdateStrategy = {execute: function(button) {} };
 };

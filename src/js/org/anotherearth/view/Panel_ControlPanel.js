@@ -26,7 +26,7 @@ org.anotherearth.view.Panel = function(panelBodyId, panelHeaderId, panelId, pane
 	//private methods
 	var _setDraggableContainment = function(containment) {
 		$(panel).draggable('option', 'containment', containment);
-	}
+	};
 
 	var _createDragHandle = function() {
 		var panelDragHandle = document.createElement('div');

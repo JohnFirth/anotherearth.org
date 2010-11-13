@@ -322,4 +322,4 @@ org.anotherearth.controller.EarthsController = function(earthsManager, urlManage
 		_evaluateCameraHeadingDiff();
 		_evaluateCameraTiltDiff();
 	};
-}
+};

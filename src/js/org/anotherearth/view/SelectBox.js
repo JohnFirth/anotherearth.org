@@ -10,30 +10,32 @@ org.anotherearth.view.SelectBox = function(options, selectBoxSize, selectBoxText
 	var selectBoxSize = selectBoxSize;
 	var selectBoxText = selectBoxText;
 	var selectBoxId = selectBoxId;
-	var isMultipleSelectType = isMultipleSelectType;
+	var isMultipleSelectType = isMultipleSelectType;//FIXME - a tagged class, which is bad
 	var selectBoxId = selectBoxId;
 	var onClickCommand, containingElement, selectBox;
 	var undoRedoUpdateStrategy, newEarthPropsUpdateStrategy;
+	var multipleSelectCheckBoxes = null;
 
 	//privileged methods
 	this.addClickEventListener = function(command) {
+		onClickCommand = command;
 		if (!isMultipleSelectType) {
 			for (var option in options) {
 				if (options.hasOwnProperty(option)) {
-					$(options[option].htmlElement).click(function() {command.execute(selectBox, this)});
+					$(options[option].htmlElement).click(function() {command.execute(selectBox, this);});
 				}			
 			}
 		}
 		else {
-			var checkboxes = [];
+			multipleSelectCheckBoxes = [];//FIXME wrong to be populating this array here - also, can't I get programmatic access to this widget?
 			var re = new RegExp(selectBoxId + '\\d+');//This is the form of id assigned by dropdownlist plugin to checkboxes.
 			var inputs = document.getElementsByTagName('input');
 			for (var input in inputs) {
 				if (typeof inputs[input].id !== 'undefined' && inputs[input].id.match(re)) {
-					checkboxes.push(inputs[input]);
+					multipleSelectCheckBoxes.push(inputs[input]);
 				}
 			}
-			$(checkboxes).click(function() {command.execute(selectBox, this);});
+			$(multipleSelectCheckBoxes).click(function() {command.execute(selectBox, this);});
 		}
 	};
 	this.createGUIElements = function() {
@@ -100,10 +102,19 @@ org.anotherearth.view.SelectBox = function(options, selectBoxSize, selectBoxText
 	};
 	this.setIsSelected = function(index, newIsSelected) {
 		var oldIsSelected = this.getIsSelected(index);
-		if (newIsSelected === oldIsSelected) {
+		if (newIsSelected === oldIsSelected) 
 			return;
+
+		var selectedElement;
+		if (isMultipleSelectType) {
+			selectedElement = $(multipleSelectCheckBoxes[index]);
+			(newIsSelected) ? selectedElement.attr('checked', true) : selectedElement.attr('checked', false);
 		}
-		(oldIsSelected)? $(options[index].htmlElement).removeAttr('selected') : $(options[index].htmlElement).attr('selected', 'selected');
+		else {
+			selectedElement = $(options[index].htmlElement);
+			selectedElement.val(newIsSelected);
+		}
+		
 		onClickCommand.execute(selectBox, options[index]);
 	};
 	this.performUndoRedoUpdate = function() {
@@ -121,17 +132,7 @@ org.anotherearth.view.SelectBox = function(options, selectBoxSize, selectBoxText
 		return i;
 	};
 	/*
-	this.setIsEnabled = function(index, newIsEnabled) {//TODO: improve this
-		var oldIsEnabled = newIsEnabled;
-		if(oldIsEnabled === newIsEnabled) {
-			return;
-		}
-		if (newIsEnabled) {
-			$(selectBox, option).removeAttr('disabled').removeClass('ui-state-disabled');
-		}
-		else {
-			$(selectBox, option).attr('disabled', 'disabled').removeClass('ui-state-hover').removeClass('ui-state-focus').addClass('ui-state-disabled');
-		}
+	this.setIsEnabled = function(optionIndex, newIsEnabled) {
 	};
 	*/
 	this.setTabIndex = function(tabIndex) {
@@ -165,7 +166,7 @@ org.anotherearth.view.SelectBox = function(options, selectBoxSize, selectBoxText
 	
 	//constructor
 	this.createGUIElements();
-	onClickCommand               = function() { this.execute = function() {} };
+	onClickCommand               = function() { this.execute = function() {}; };
 	undoRedoUpdateStrategy       = { execute: function(button) {} };
 	newEarthPropsUpdateStrategy  = { execute: function(button) {} };
 };

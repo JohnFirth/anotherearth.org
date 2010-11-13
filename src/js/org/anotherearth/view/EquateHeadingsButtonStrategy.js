@@ -4,7 +4,7 @@ org = window.org || {};
 org.anotherearth = window.org.anotherearth || {};
 org.anotherearth.view = window.org.anotherearth.view || {};
 
-org.anotherearth.view.EquateHeadingsButtonStrategy = function() {}; //implements Observer update stragegy
+org.anotherearth.view.EquateHeadingsButtonStrategy = function() {}; //implements Observer update strategy
 org.anotherearth.view.EquateHeadingsButtonStrategy.prototype = {
 	execute: function(button) {
 		//org.anotherearth.Interface.ensureImplements(button, org.anotherearth.GUIWidget);
