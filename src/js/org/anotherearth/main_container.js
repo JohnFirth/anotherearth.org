@@ -285,8 +285,8 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 
 		$(coms.searchBoxSubPanel.getContainingElement()).find('.sub_panel_title').append(googleBranding);
 
-		coms.miscellaneousSubPanel      = new ae.view.ShrinkableSubPanel("undo/redo and create link",
-		                                                                 ae.CP_MISC_OPTIONS_SUB_PANEL_ID);	
+		coms.miscellanySubPanel         = new ae.view.ShrinkableSubPanel("spatial data undo/redo & URL",
+		                                                                 ae.CP_MISC_OPTIONS_SUB_PANEL_ID);			
 
 		
 		/* callbacks on earths and one earth's kml, loading */ 
@@ -332,17 +332,16 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 		coms.cameraPropCopyingSubPanel.addChild(coms.equateCameraTiltsButton);
 		coms.earthOptionsSubPanel.addChild(coms.LEarthOptionSelector);
 		coms.earthOptionsSubPanel.addChild(coms.REarthOptionSelector);
-		coms.miscellaneousSubPanel.addChild(coms.undoButton);
-		coms.miscellaneousSubPanel.addChild(coms.redoButton);
-		coms.miscellaneousSubPanel.addChild(coms.linkCreatorButton);
+		coms.miscellanySubPanel.addChild(coms.undoButton);
+		coms.miscellanySubPanel.addChild(coms.redoButton);
+		coms.miscellanySubPanel.addChild(coms.linkCreatorButton);
 		coms.searchBoxSubPanel.addChild(coms.leftEarthSearch);
 		coms.searchBoxSubPanel.addChild(coms.rightEarthSearch);
 		coms.controlPanel.addChild(coms.earthOptionsSubPanel);
 		coms.controlPanel.addChild(coms.searchBoxSubPanel);
 		coms.controlPanel.addChild(coms.checkBoxSubPanel);
 		coms.controlPanel.addChild(coms.cameraPropCopyingSubPanel);
-		coms.controlPanel.addChild(coms.miscellaneousSubPanel);
-
+		coms.controlPanel.addChild(coms.miscellanySubPanel);
 		google.language.getBranding('google_search_branding');
 		$('.gBrandingText').css('vertical-align', 'text-bottom');
 
