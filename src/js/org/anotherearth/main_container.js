@@ -288,7 +288,7 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 
 		$(coms.searchBoxSubPanel.getContainingElement()).find('.sub_panel_title').append(googleBranding);
 
-		coms.miscellanySubPanel         = new ae.view.ShrinkableSubPanel("undo/redo and URL",
+		coms.miscellanySubPanel         = new ae.view.ShrinkableSubPanel("undo/redo and URL link",
 		                                                                 ae.CP_MISC_OPTIONS_SUB_PANEL_ID);			
 
 		
