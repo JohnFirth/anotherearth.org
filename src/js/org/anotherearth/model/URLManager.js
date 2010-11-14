@@ -4,24 +4,24 @@ org = window.org || {};
 org.anotherearth = window.org.anotherearth || {};
 org.anotherearth.model = window.org.anotherearth.model || {};
 
-
 //FIXME this class's functionality should be subsumed within the model class - in large part this class runs counter to principle of asking class with information to do work for you
 org.anotherearth.model.URLManager = {};
 org.anotherearth.model.URLManager.createURLFromCurrentParameters = function(LEarth, REarth, earthsManager) {//static method
-		//TODO:add times
-		var LEarthProps = LEarth.getCameraProperties();
-		var REarthProps = REarth.getCameraProperties();
+		var LEarthProps = LEarth.getProperties();
+		var REarthProps = REarth.getProperties();
 		var parameters = {};
 		parameters.LLat  = LEarthProps.lat;
 		parameters.LLng  = LEarthProps.lng;
 		parameters.LAlt  = LEarthProps.alt;
 		parameters.LTilt = LEarthProps.tilt;
 		parameters.LHead = LEarthProps.head;
+		parameters.LDate = LEarthProps.date;
 		parameters.RLat  = REarthProps.lat;
 		parameters.RLng  = REarthProps.lng;
 		parameters.RAlt  = REarthProps.alt;
 		parameters.RTilt = REarthProps.tilt;
 		parameters.RHead = REarthProps.head;
+		parameters.RDate = REarthProps.date;
 		parameters.isTiltLocked    = (earthsManager.getIsTiltLocked())          ? 1 : 0;
 		parameters.isHeadingLocked = (earthsManager.getIsHeadingLocked())       ? 1 : 0;
 		parameters.isAltLocked     = (earthsManager.getIsVertMovementLocked())  ? 1 : 0;

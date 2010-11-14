@@ -28,27 +28,30 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 		initialLCameraProps.alt  = parseFloat(urlManager.getURLQueryStringValue('LAlt'))  || ae.DEFAULT_L_EARTH_COORDS.ALT;
 		initialLCameraProps.tilt = parseFloat(urlManager.getURLQueryStringValue('LTilt')) || ae.DEFAULT_L_EARTH_COORDS.TILT;
 		initialLCameraProps.head = parseFloat(urlManager.getURLQueryStringValue('LHead')) || ae.DEFAULT_L_EARTH_COORDS.HEAD;
+		initialLCameraProps.date = urlManager.getURLQueryStringValue('LDate')             || null;
+		
 		initialRCameraProps.lat  = parseFloat(urlManager.getURLQueryStringValue('RLat'))  || ae.DEFAULT_R_EARTH_COORDS.LAT;
 		initialRCameraProps.lng  = parseFloat(urlManager.getURLQueryStringValue('RLng'))  || ae.DEFAULT_R_EARTH_COORDS.LNG;
 		initialRCameraProps.alt  = parseFloat(urlManager.getURLQueryStringValue('RAlt'))  || ae.DEFAULT_R_EARTH_COORDS.ALT;
 		initialRCameraProps.tilt = parseFloat(urlManager.getURLQueryStringValue('RTilt')) || ae.DEFAULT_R_EARTH_COORDS.TILT;
 		initialRCameraProps.head = parseFloat(urlManager.getURLQueryStringValue('RHead')) || ae.DEFAULT_R_EARTH_COORDS.HEAD;
+		initialRCameraProps.date = urlManager.getURLQueryStringValue('RDate')             || null;
 
 		coms.welcomePanel = new ae.view.Panel(ae.WELCOME_PANEL_BODY_ID,
 		                                      ae.WELCOME_PANEL_HEADER_ID,
-																				  ae.WELCOME_PANEL_ID,
-																				  'Welcome to anotherearth.org',
-																				  body,
-																				  true,
-																				  true,
-																				  true);
+									          ae.WELCOME_PANEL_ID,
+											  'Welcome to anotherearth.org',
+											  body,
+											  true,
+											  true,
+											  true);
 		var welcomeText = document.createElement('div');
 		welcomeText.innerHTML = '<p>This application gives you a number of tools with which you can easily ' +
 		                        'and comprehensively compare two views of the Earth, using the Google Earth browser plugin. ' +
 		                        'These include the ability to synchronize the movement of two Earths, ' + 
 		                        'select layers such as buildings, roads and borders for the Earths, ' +
-		                        'jump to locations of your choice, undo/redo any movements, and create links to your views.</p>' +
-														'<p>Please see the <a href="Pakistan_floods/index.html">sub-site dedicated to the recent flooding in Pakistan</a>.</p>' +
+		                        'jump to locations of your choice, undo/redo any spatial movements, and create links to your views.</p>' +
+								'<p>Please see the <a href="Pakistan_floods/index.html">sub-site dedicated to the recent flooding in Pakistan</a>.</p>' +
 		                        '<p>Please refer to Google\'s documentation ' +
 		                        'for guides to Google Earth and its navigation control.</p>' +
 		                        '<p>If your browser\'s preferred language isn\'t English then using a ' +
@@ -66,17 +69,17 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 		
 		//main MVC objects
 		coms.earthsManager    = new ae.model.EarthsManager();
-		coms.earthsController = new ae.controller.EarthsController(coms.earthsManager, urlManager, initialLocks); 
+		coms.earthsController = new ae.controller.EarthsController(coms.earthsManager, urlManager); 
 		coms.leftEarth	      = new ae.view.LockableEarth(ae.L_EARTH_ID, coms.earthsController, initialLCameraProps);
 		coms.rightEarth       = new ae.view.LockableEarth(ae.R_EARTH_ID, coms.earthsController, initialRCameraProps);
 		coms.controlPanel     = new ae.view.ControlPanel(ae.CP_BUTTONS_CONTAINER_ID,//TODO: consider using builder pattern
-																										 ae.CP_HEADER_ID,
-																										 ae.CP_ID,
-																										 'Control Panel',
-																										 body,
-																										 true,
-																										 true,
-																										 false);
+														 ae.CP_HEADER_ID,
+														 ae.CP_ID,
+														 'Control Panel',
+														 body,
+														 true,
+														 true,
+														 false);
 		coms.earthsController.setLeftEarth(coms.leftEarth);
 		coms.earthsController.setRightEarth(coms.rightEarth);
 		coms.earthsController.setControlPanel(coms.controlPanel);
@@ -134,13 +137,13 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 		coms.headingLockingCheckbox.addClickEventListener(coms.toggleHeadingLockCommand);
 
 		//buttons
-		coms.undoButton = new ae.view.TwoEarthsButton('undo', ae.CP_UNDO_BUTTON_ID, coms.earthsManager);
+		coms.undoButton = new ae.view.TwoEarthsButton('undo spatial change', ae.CP_UNDO_BUTTON_ID, coms.earthsManager);
 		coms.undoButton.addClickEventListener(coms.undoCommand);
 		coms.undoButton.setUndoRedoUpdateStrategy(coms.undoButtonUpdateStrategy);
 		coms.undoButton.setNewEarthPropsUpdateStrategy(coms.undoButtonUpdateStrategy);
 		coms.undoButton.setIsEnabled(false);
 
-		coms.redoButton = new ae.view.TwoEarthsButton('redo', ae.CP_REDO_BUTTON_ID, coms.earthsManager);
+		coms.redoButton = new ae.view.TwoEarthsButton('redo spatial change', ae.CP_REDO_BUTTON_ID, coms.earthsManager);
 		coms.redoButton.addClickEventListener(coms.redoCommand);
 		coms.redoButton.setUndoRedoUpdateStrategy(coms.redoButtonUpdateStrategy);
 		coms.redoButton.setNewEarthPropsUpdateStrategy(coms.redoButtonUpdateStrategy);
@@ -230,7 +233,7 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 		atmosphereOption.value = "atmosphere";
 		latLngGridlinesOption.text  = "grid";
 		latLngGridlinesOption.value = "grid";
-		timeOption.text  = "time";
+		timeOption.text  = "time control";
 		timeOption.value = "time";
 		var LEarthOptions = [borderOption,
 		                     hiResBuildingsOption,
@@ -285,7 +288,7 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 
 		$(coms.searchBoxSubPanel.getContainingElement()).find('.sub_panel_title').append(googleBranding);
 
-		coms.miscellanySubPanel         = new ae.view.ShrinkableSubPanel("spatial data undo/redo & URL",
+		coms.miscellanySubPanel         = new ae.view.ShrinkableSubPanel("undo/redo and URL",
 		                                                                 ae.CP_MISC_OPTIONS_SUB_PANEL_ID);			
 
 		

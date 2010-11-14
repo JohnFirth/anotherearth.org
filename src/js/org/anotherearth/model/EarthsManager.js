@@ -23,12 +23,12 @@ org.anotherearth.model.EarthsManager = function() {
 	var isTiltLocked = false;
 	var isHeadingLocked = false;
 	var completeHistory = [];
-	var undoHistory = [];                   //When undo is performed, a snapshot of current history is taken and 
-	var currentUndoHistoryPosition = null;  //traversed through until new movement is performed, at which point 
-	var observers = {};                     //undoHistory is cleared and currentUndoHistoryPosition is set back 
-	observers.undoRedo = [];                //to null. currentUndoHistoryPosition is relative to the last item 
-	observers.newEarthProps = [];           //to the highest index array element. This seems like the most legible
-	                                        //undo scheme.
+	var undoHistory = [];                  //When undo is performed, a snapshot of current history is taken and 
+	var currentUndoHistoryPosition = null; //traversed through until new movement is performed, at which point 
+	var observers = {};                    //undoHistory is cleared and currentUndoHistoryPosition is set back 
+	observers.undoRedo = [];               //to null. currentUndoHistoryPosition is relative to the last item 
+	observers.newEarthProps = [];          //to the highest index array element. This seems like the most legible
+	                                       //undo scheme.
 	//privileged methods
 	this.redo = function() {
 		if (this.getNumberRemainingRedos()) {//If not equal to null and not equal to 0.

@@ -34,8 +34,8 @@ org.anotherearth.view.SearchBox = function(earth, earthsController, searchBoxId,
 			if (searcher.results.length && searcher.results[0].GsearchResultClass === GlocalSearch.RESULT_CLASS) {
 				lat = parseFloat(searcher.results[0].lat);
 				lng = parseFloat(searcher.results[0].lng);
-				var props = earth.getCameraProperties();
-				earthsController.jumpCameraCoords(earth, lat, lng, 20000, props.tilt, props.head);
+				var props = earth.getProperties();
+				earthsController.jumpCameraCoords(earth, lat, lng, 20000, props.tilt, props.head, props.date);
 			}
 		});
 		searchControl.addSearcher(searcher);

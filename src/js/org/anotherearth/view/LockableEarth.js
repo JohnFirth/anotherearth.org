@@ -5,7 +5,7 @@ org.anotherearth = window.org.anotherearth || {};
 org.anotherearth.view = window.org.anotherearth.view || {};
 
 //wrapper class for plugin
-org.anotherearth.view.LockableEarth = function(canvasDivId, earthsController, initialCameraProperties) {
+org.anotherearth.view.LockableEarth = function(canvasDivId, earthsController, initialEarthProperties) {
 	//private variables
 	var ALTITUDE_TYPE;
 	var REGULAR_FLY_TO_SPEED = 3.5;
@@ -47,13 +47,14 @@ org.anotherearth.view.LockableEarth = function(canvasDivId, earthsController, in
 	var _fetchKml = function(callback) {
 		google.earth.fetchKml(ge, kmlUrl, callback.enact);
 	};	
+	
 	var _initEarth = function(instance) {//constructor
 		ge = instance;
 		geView      = instance.getView();
 		geWindow    = instance.getWindow();
 		geOptions   = instance.getOptions();
 		geLayerRoot = instance.getLayerRoot();
-		geTime     = instance.getTime();
+		geTime      = instance.getTime();
 		
 		ge.getNavigationControl().setVisibility(ge.VISIBILITY_AUTO);
 		ALTITUDE_TYPE = ge.ALTITUDE_ABSOLUTE;
@@ -78,12 +79,13 @@ org.anotherearth.view.LockableEarth = function(canvasDivId, earthsController, in
 			}
 		}
 
-		self.setCameraProperties(initialCameraProperties.lat,
-		                         initialCameraProperties.lng,
-		                         initialCameraProperties.alt,
-		                         initialCameraProperties.tilt,
-		                         initialCameraProperties.head,
-		                         false);
+		self.setProperties(initialEarthProperties.lat,
+		                   initialEarthProperties.lng,
+		                   initialEarthProperties.alt,
+		                   initialEarthProperties.tilt,
+		                   initialEarthProperties.head,
+		                   false,
+		                   initialEarthProperties.date);
 		earthsController.saveCameraProperties(false);//this method won't do anything when called by first map to be initialized
 		geWindow.setVisibility(true);
 
@@ -105,10 +107,10 @@ org.anotherearth.view.LockableEarth = function(canvasDivId, earthsController, in
 				earthsController.setMoveInitializingEarth(self);
 			}
 			else if (moveInitializingEarth !== self) {//this is a catch for rare instances, happening exclusively during synchronized dragging,
-				return;                                 //in which a camera moves twice after it has had its position set, thereby bypassing the
+				return;                               //in which a camera moves twice after it has had its position set, thereby bypassing the
 			}                                         //movement-ignoring condition above and typically causing movement to abruptly halt.
 			                                          //since the movement-ignoring condition is used for other types of movement (other than dragging)
-																								//it has not been replaced by this commented condition.
+													  //it has not been replaced by this commented condition.
 			earthsController.moveOtherEarthIfLocked(self);
 		});
 		google.earth.addEventListener(geView, 'viewchangeend', function() {
@@ -125,26 +127,54 @@ org.anotherearth.view.LockableEarth = function(canvasDivId, earthsController, in
 		});
 		earthsController.respondToEarthFullyLoading();
 	};
+	
 	var _initEarthFailed = function(errorCode){//this function is mandatory for loading the plugin but unnecessary for me
 	};
+	
 	var _createEarthCanvas = function() {
 		earthCanvas = document.createElement('div');
 		earthCanvas.id = canvasDivId;
 		$(earthCanvas).addClass(org.anotherearth.EARTH_CANVAS_CLASS);
 		$('body').append(earthCanvas);
 	};
+	
+	var _getEarthDate = function() {
+		  var tp = geTime.getTimePrimitive();
+		  var time;
+
+		  if (tp.getType() == 'KmlTimeSpan') {
+			  time = tp.getBegin().get();
+		  } else {
+			  time = tp.getWhen().get();
+		  }
+
+		  var re = new RegExp("^(\\d{4})-(\\d{2})-(\\d{2})");
+
+		  var regExMatches = time.match(re);
+		  return regExMatches[0];
+	};
 
 	//privileged methods
-	this.setCameraProperties = function(lat, lng, alt, tilt, head, isNextMoveIgnored) {
+	//TODO should just pass in properties object
+	this.setProperties = function(lat, lng, alt, tilt, head, isNextMoveIgnored, date) {
 		if (typeof geView === 'undefined') {
 			var errorMessage = canvasDivId + " not initialized";
 			throw new ReferenceError(errorMessage);
 		}
+		
 		var camera = geView.copyAsCamera(ALTITUDE_TYPE);
+		
 		if (isNextMoveIgnored) {//e.g. if earths are locked together, this will prevent an infinite loop of property setting between the Earths
 			isNextViewChangeIgnored    = true;
 			isNextViewChangeEndIgnored = true;
 		}
+		
+		if (date !== null) {
+			var timeStamp = ge.createTimeStamp("");
+			timeStamp.getWhen().set(date);		
+			geTime.setTimePrimitive(timeStamp);
+		}
+			
 		camera.setLatitude(lat);
 		camera.setLongitude(lng);
 		camera.setAltitude(alt);
@@ -154,14 +184,16 @@ org.anotherearth.view.LockableEarth = function(canvasDivId, earthsController, in
 		geView.setAbstractView(camera);
 		geOptions.setFlyToSpeed(REGULAR_FLY_TO_SPEED);
 	};
-	this.getCameraProperties = function() {
+	
+	this.getProperties = function() {
 		if (typeof geView === 'undefined') {//i.e. if earth not loaded
 			var errorMessage = canvasDivId + " not initialized";
 			throw new ReferenceError(errorMessage);
 		}
 		else {
-			var camera = geView.copyAsCamera(ALTITUDE_TYPE);
 			var props = {};
+			var camera    = geView.copyAsCamera(ALTITUDE_TYPE);	
+			
 			//Props given to six decimal places - any more precision unnecessary even at lowest altitudes.
 			var oneMillion = Math.pow(10,6);
 			props.lat  = Math.round(camera.getLatitude()  * oneMillion)/oneMillion;
@@ -169,10 +201,15 @@ org.anotherearth.view.LockableEarth = function(canvasDivId, earthsController, in
 			props.alt  = Math.round(camera.getAltitude()  * oneMillion)/oneMillion;
 			props.tilt = Math.round(camera.getTilt()      * oneMillion)/oneMillion;
 			props.head = Math.round(camera.getHeading()   * oneMillion)/oneMillion;
+			
+			props.date = _getEarthDate();
+			
 			return props;
 		}
 	};
+	
 	this.toggleExtra = function(overlayId) {
+		//TODO this should be populated from an enum equivalent within this class
 		switch(overlayId) {
 			case 'atmosphere' :
 				geOptions.setAtmosphereVisibility(!geOptions.getAtmosphereVisibility());

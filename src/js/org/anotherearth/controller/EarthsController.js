@@ -4,7 +4,7 @@ org = window.org || {};
 org.anotherearth = window.org.anotherearth || {};
 org.anotherearth.controller = window.org.anotherearth.controller || {};
 
-org.anotherearth.controller.EarthsController = function(earthsManager, urlManager, initialLocks) {
+org.anotherearth.controller.EarthsController = function(earthsManager, urlManager) {
 	//private fields
 	var controlPanel;
 	var leftEarth, rightEarth, linkCreatorButton;
@@ -26,8 +26,8 @@ org.anotherearth.controller.EarthsController = function(earthsManager, urlManage
 			earthsManager.setCameraCoordDiff('lng', null);
 		} 
 		else {
-			var leftEarthCamProps  = leftEarth.getCameraProperties();
-			var rightEarthCamProps = rightEarth.getCameraProperties();
+			var leftEarthCamProps  = leftEarth.getProperties();
+			var rightEarthCamProps = rightEarth.getProperties();
 			earthsManager.setCameraCoordDiff('lat', (leftEarthCamProps.lat - rightEarthCamProps.lat));
 			earthsManager.setCameraCoordDiff('lng', (leftEarthCamProps.lng - rightEarthCamProps.lng));
 		}
@@ -38,7 +38,7 @@ org.anotherearth.controller.EarthsController = function(earthsManager, urlManage
 			earthsManager.setCameraCoordDiff('alt', null);
 		}
 		else {
-			earthsManager.setCameraCoordDiff('alt', (leftEarth.getCameraProperties().alt - rightEarth.getCameraProperties().alt));
+			earthsManager.setCameraCoordDiff('alt', (leftEarth.getProperties().alt - rightEarth.getProperties().alt));
 		}
 	};
 
@@ -47,7 +47,7 @@ org.anotherearth.controller.EarthsController = function(earthsManager, urlManage
 			earthsManager.setCameraCoordDiff('tilt', null);
 		}
 		else {
-			earthsManager.setCameraCoordDiff('tilt', (leftEarth.getCameraProperties().tilt - rightEarth.getCameraProperties().tilt));
+			earthsManager.setCameraCoordDiff('tilt', (leftEarth.getProperties().tilt - rightEarth.getProperties().tilt));
 		}
 	};
 
@@ -56,7 +56,7 @@ org.anotherearth.controller.EarthsController = function(earthsManager, urlManage
 			earthsManager.setCameraCoordDiff('head', null);
 		}
 		else {
-			earthsManager.setCameraCoordDiff('head', (leftEarth.getCameraProperties().head - rightEarth.getCameraProperties().head));
+			earthsManager.setCameraCoordDiff('head', (leftEarth.getProperties().head - rightEarth.getProperties().head));
 		}
 	};
 
@@ -103,36 +103,36 @@ org.anotherearth.controller.EarthsController = function(earthsManager, urlManage
 			var takingEarth = {};
 			var newTakerProps = {};
 			var earthCamDiffs = {};
-			var takingCamProps, givingCamProps;
-			var LCameraProps  = leftEarth.getCameraProperties();
-			var RCameraProps = rightEarth.getCameraProperties();
+			var takingEarthProps, givingEarthProps;
+			var LEarthProps  = leftEarth.getProperties();
+			var REarthProps  = rightEarth.getProperties();
 
 			if (givingEarth === leftEarth) {
 				earthCamDiffs = earthsManager.getLtoRCameraPropertyDifferences();
 				takingEarth = rightEarth;
-				takingCamProps = RCameraProps;
-				givingCamProps = LCameraProps;
+				takingEarthProps = REarthProps;
+				givingEarthProps = LEarthProps;
 			}
 			else {
 				earthCamDiffs = earthsManager.getRtoLCameraPropertyDifferences();
 				takingEarth = leftEarth;
-				takingCamProps = LCameraProps;
-				givingCamProps = RCameraProps;
+				takingEarthProps = LEarthProps;
+				givingEarthProps = REarthProps;
 			}
 			
 			if (earthCamDiffs.alt === null) {
-				newTakerProps.alt = takingCamProps.alt;
+				newTakerProps.alt = takingEarthProps.alt;
 			}
 			else {
-				var calculatedTakerAlt = givingCamProps.alt - earthCamDiffs.alt;
+				var calculatedTakerAlt = givingEarthProps.alt - earthCamDiffs.alt;
 				newTakerProps.alt = ((calculatedTakerAlt > 0) ? calculatedTakerAlt : 0);//attempting to set a negative altitude causes problems
 			}
 
 			if (earthCamDiffs.lng === null) {
-				newTakerProps.lng = takingCamProps.lng;
+				newTakerProps.lng = takingEarthProps.lng;
 			}
 			else {
-				var calculatedTakerLng = givingCamProps.lng - earthCamDiffs.lng;
+				var calculatedTakerLng = givingEarthProps.lng - earthCamDiffs.lng;
 				if (calculatedTakerLng >= 180) {//TODO: can this be more succint?
 					newTakerProps.lng = calculatedTakerLng - 360;
 				}
@@ -144,16 +144,18 @@ org.anotherearth.controller.EarthsController = function(earthsManager, urlManage
 				}
 			}	
 			
-			newTakerProps.lat  = ((earthCamDiffs.lat  === null) ? takingCamProps.lat  : givingCamProps.lat  - earthCamDiffs.lat);
-			newTakerProps.tilt = ((earthCamDiffs.tilt === null) ? takingCamProps.tilt : givingCamProps.tilt - earthCamDiffs.tilt);
-			newTakerProps.head = ((earthCamDiffs.head === null) ? takingCamProps.head : givingCamProps.head - earthCamDiffs.head);
+			newTakerProps.lat  = ((earthCamDiffs.lat  === null) ? takingEarthProps.lat  : givingEarthProps.lat  - earthCamDiffs.lat);
+			newTakerProps.tilt = ((earthCamDiffs.tilt === null) ? takingEarthProps.tilt : givingEarthProps.tilt - earthCamDiffs.tilt);
+			newTakerProps.head = ((earthCamDiffs.head === null) ? takingEarthProps.head : givingEarthProps.head - earthCamDiffs.head);
 			
-			takingEarth.setCameraProperties(newTakerProps.lat,
-			                                newTakerProps.lng,
-			                                newTakerProps.alt,
-			                                newTakerProps.tilt,
-			                                newTakerProps.head,
-			                                true);
+			takingEarth.setProperties(newTakerProps.lat,
+			                          newTakerProps.lng,
+			                          newTakerProps.alt,
+			                          newTakerProps.tilt,
+			                          newTakerProps.head,
+			                          true,
+			                          takingEarthProps.date);//i.e. time changes cannot be locked owing to inconsistently available
+			                                                 //temporal data over the face of the globe
 		}
 	};
 	this.setLinkCreatorButton = function(newLinkCreatorButton) {
@@ -174,8 +176,8 @@ org.anotherearth.controller.EarthsController = function(earthsManager, urlManage
 	this.setRightSearchBar = function(newBar) {
 		rightSearchBar = newBar;
 	};
-	this.jumpCameraCoords = function(earth, lat, lng, alt, tilt, head) {
-		earth.setCameraProperties(lat, lng, alt, tilt, head, true);
+	this.jumpCameraCoords = function(earth, lat, lng, alt, tilt, head, date) {
+		earth.setProperties(lat, lng, alt, tilt, head, true, date);
 		this.saveCameraProperties(false);
 		_evaluateCameraViewCenterDiff();
 		_evaluateCameraAltitudeDiff();
@@ -186,54 +188,58 @@ org.anotherearth.controller.EarthsController = function(earthsManager, urlManage
 		if (earthsManager.getIsVertMovementLocked()) {
 			earthsManager.setCameraCoordDiff('alt', 0);
 		}
-		var donorProps    = donor.getCameraProperties();
-		var receiverProps = receiver.getCameraProperties();
-		receiver.setCameraProperties(receiverProps.lat,
-		                          receiverProps.lng,
-		                          donorProps.alt,
-		                          receiverProps.tilt,
-		                          receiverProps.head,
-		                          true);
+		var donorProps    = donor.getProperties();
+		var receiverProps = receiver.getProperties();
+		receiver.setProperties(receiverProps.lat,
+		                       receiverProps.lng,
+		                       donorProps.alt,
+		                       receiverProps.tilt,
+		                       receiverProps.head,
+		                       true,
+		                       receiverProps.date);
 	};
 	this.equateCameraLatsLngs = function() {
 		if (earthsManager.getIsHorizMovementLocked()) {
 			earthsManager.setCameraCoordDiff('lat', 0);
 			earthsManager.setCameraCoordDiff('lng', 0);
 		}
-		var donorProps    = donor.getCameraProperties();
-		var receiverProps = receiver.getCameraProperties();
-		receiver.setCameraProperties(donorProps.lat,
-		                             donorProps.lng,
-		                             receiverProps.alt,
-		                             receiverProps.tilt,
-		                             receiverProps.head,
-		                             true);
+		var donorProps    = donor.getProperties();
+		var receiverProps = receiver.getProperties();
+		receiver.setProperties(donorProps.lat,
+		                       donorProps.lng,
+		                       receiverProps.alt,
+		                       receiverProps.tilt,
+		                       receiverProps.head,
+		                       true,
+		                       receiverProps.date);
 	};
 	this.equateCameraTilts = function() {
 		if (earthsManager.getIsTiltLocked()) {
 			earthsManager.setCameraCoordDiff('tilt', 0);
 		}
-		var donorProps    = donor.getCameraProperties();
-		var receiverProps = receiver.getCameraProperties();
-		receiver.setCameraProperties(receiverProps.lat,
-		                             receiverProps.lng,
-		                             receiverProps.alt,
-		                             donorProps.tilt,
-		                             receiverProps.head,
-		                             true);
+		var donorProps    = donor.getProperties();
+		var receiverProps = receiver.getProperties();
+		receiver.setProperties(receiverProps.lat,
+		                       receiverProps.lng,
+		                       receiverProps.alt,
+		                       donorProps.tilt,
+		                       receiverProps.head,
+		                       true,
+		                       receiverProps.date);
 	};
 	this.equateCameraHeadings = function() {
 		if (earthsManager.getIsHeadingLocked()) {
 			earthsManager.setCameraCoordDiff('head', 0);
 		}
-		var donorProps    = donor.getCameraProperties();
-		var receiverProps = receiver.getCameraProperties();
-		receiver.setCameraProperties(receiverProps.lat,
+		var donorProps    = donor.getProperties();
+		var receiverProps = receiver.getProperties();
+		receiver.setProperties(receiverProps.lat,
 		                             receiverProps.lng,
 		                             receiverProps.alt,
 		                             receiverProps.tilt,
 		                             donorProps.head,
-		                             true);
+		                             true,
+		                             receiverProps.date);
 	};
 	this.toggleEarthExtra = function(earthId, extraId) {
 		(earthId === 'LEarth') ? leftEarth.toggleExtra(extraId) : rightEarth.toggleExtra(extraId);
@@ -274,8 +280,8 @@ org.anotherearth.controller.EarthsController = function(earthsManager, urlManage
 	this.saveCameraProperties = function(isCurrentPropertySetOverwritten) {
 		var LEarthProps, REarthProps;
 		try {
-			LEarthProps = leftEarth.getCameraProperties();
-			REarthProps = rightEarth.getCameraProperties();
+			LEarthProps = leftEarth.getProperties();
+			REarthProps = rightEarth.getProperties();
 		}
 		catch (err) {
 			if (err instanceof ReferenceError) {//At least one Earth has not been initialized - safe to ignore.
@@ -305,18 +311,20 @@ org.anotherearth.controller.EarthsController = function(earthsManager, urlManage
 		if (typeof propsRevertedTo === 'undefined' || propsRevertedTo === null) {
 			return;
 		}
-		leftEarth.setCameraProperties( propsRevertedTo.leftEarth.lat,
-		                               propsRevertedTo.leftEarth.lng,
-		                               propsRevertedTo.leftEarth.alt,
-		                               propsRevertedTo.leftEarth.tilt,
-		                               propsRevertedTo.leftEarth.head,
-		                               true);
-		rightEarth.setCameraProperties(propsRevertedTo.rightEarth.lat,
-		                               propsRevertedTo.rightEarth.lng,
-		                               propsRevertedTo.rightEarth.alt,
-		                               propsRevertedTo.rightEarth.tilt,
-		                               propsRevertedTo.rightEarth.head,
-		                               true);
+		leftEarth.setProperties(propsRevertedTo.leftEarth.lat,
+		                        propsRevertedTo.leftEarth.lng,
+		                        propsRevertedTo.leftEarth.alt,
+		                        propsRevertedTo.leftEarth.tilt,
+		                        propsRevertedTo.leftEarth.head,
+		                        true,
+		                        propsRevertedTo.leftEarth.date);
+		rightEarth.setProperties(propsRevertedTo.rightEarth.lat,
+		                         propsRevertedTo.rightEarth.lng,
+		                         propsRevertedTo.rightEarth.alt,
+		                         propsRevertedTo.rightEarth.tilt,
+		                         propsRevertedTo.rightEarth.head,
+		                         true,
+		                         propsRevertedTo.rightEarth.date);
 		_evaluateCameraViewCenterDiff();
 		_evaluateCameraAltitudeDiff();
 		_evaluateCameraHeadingDiff();

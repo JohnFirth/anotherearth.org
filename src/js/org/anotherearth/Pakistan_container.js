@@ -275,7 +275,7 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 		})();
 
 		var kmlLoadedCallback = function() {
-			coms.rightEarth.setCameraProperties(28.27155, 69.349811, 23842.296337, 60.638956, 65.863623);
+			coms.rightEarth.setProperties(28.27155, 69.349811, 23842.296337, 60.638956, 65.863623);
 			setTimeout("org.anotherearth.Container.getInstance().getComponent('rightEarth').toggleExtra('time')", 1000);
 		};
 
