@@ -169,12 +169,6 @@ org.anotherearth.view.LockableEarth = function(canvasDivId, earthsController, in
 			isNextViewChangeEndIgnored = true;
 		}
 		
-		if (date !== null) {
-			var timeStamp = ge.createTimeStamp("");
-			timeStamp.getWhen().set(date);		
-			geTime.setTimePrimitive(timeStamp);
-		}
-			
 		camera.setLatitude(lat);
 		camera.setLongitude(lng);
 		camera.setAltitude(alt);
@@ -183,6 +177,14 @@ org.anotherearth.view.LockableEarth = function(canvasDivId, earthsController, in
 		geOptions.setFlyToSpeed(ge.SPEED_TELEPORT);
 		geView.setAbstractView(camera);
 		geOptions.setFlyToSpeed(REGULAR_FLY_TO_SPEED);
+		
+		//putting date setting last in case that historical data for the original location differs from that for the new location,
+		//assuming this matters
+		if (date !== null) {
+			var timeStamp = ge.createTimeStamp("");
+			timeStamp.getWhen().set(date);		
+			geTime.setTimePrimitive(timeStamp);
+		}
 	};
 	
 	this.getProperties = function() {
