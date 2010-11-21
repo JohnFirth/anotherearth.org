@@ -57,7 +57,7 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 		                        '<p>If your browser\'s preferred language isn\'t English then using a ' +
 		                        'translator, <span id=\"google_branding\"></span>, ' +
 		                        'I\'ve attempted to convert the text.</p>' +
-		                        '<p>I hope you find the application useful! Feel free to contact me by email: contact(at)anotherearth(dot)org</p>';
+		                        '<p>I hope you find the application useful! Please feel free to contact me at <a href="mailto:contact@anotherearth.org">contact@anotherearth.org</a>.</p>';
 		
 		if (!$.support.leadingWhitespace) {//if is IE
 			welcomeText.innerHTML += '<p id="IE_message">Sorry, but to ensure an optimal experience with this site, I recommend using the ' +

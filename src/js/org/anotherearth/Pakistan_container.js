@@ -50,7 +50,7 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 		                        'around 28 SHa`baan 1431 A.H./ 9 August 2010 A.D. (Imagery from <a href="http://earthobservatory.nasa.gov/IOTD/view.php?id=45343">NASA\'s Earth Observatory</a>.) ' +
 		                        'The left-hand frame shows the Earth on 8 Jumaada al-THaany 1431 / May 22, 2010.</p>' +
 		                        '<p>If you know of kml data more representative of the flooding in Pakistan this year, please get in contact ' +
-		                        'with me at contact(at)anotherearth(dot)org.</p>' +
+		                        'with me at <a href="mailto:contact@anotherearth.org">contact@anotherearth.org</a>.</p>' +
 		                        '<p>Please see <a href="http://www.google.com/crisisresponse/pakistan_floods.html">www.google.com/crisisresponse/pakistan_floods.html ' +
 		                        '</a> for ways in which you can help.</p>' +
 		                        '<p>If your browser\'s preferred language isn\'t English then using a ' +
