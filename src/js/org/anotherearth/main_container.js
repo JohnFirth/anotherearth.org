@@ -51,7 +51,7 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 		                        'These include the ability to synchronize the movement of two Earths, ' + 
 		                        'select layers such as buildings, roads and borders for the Earths, ' +
 		                        'jump to locations of your choice, undo/redo any spatial movements, and create links to your views.</p>' +
-								'<p>Please see the <a href="Pakistan_floods/index.html">sub-site dedicated to the recent flooding in Pakistan</a>.</p>' +
+								            //'<p>Please see the <a href="Pakistan_floods/index.html">sub-site dedicated to the recent flooding in Pakistan</a>.</p>' +
 		                        '<p>Please refer to Google\'s documentation ' +
 		                        'for guides to Google Earth and its navigation control.</p>' +
 		                        '<p>If your browser\'s preferred language isn\'t English then using a ' +
