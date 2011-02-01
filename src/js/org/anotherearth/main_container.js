@@ -47,7 +47,7 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 											  true);
 		var welcomeText = document.createElement('div');
 		welcomeText.innerHTML = '<p>This application gives you a number of tools with which you can easily ' +
-		                        'and comprehensively compare two views of the Earth, using the Google Earth browser plugin. ' +
+		                        'and comprehensively compare two maps of the Earth, using the Google Earth browser plugin. ' +
 		                        'These include the ability to synchronize the movement of two Earths, ' + 
 		                        'select layers such as buildings, roads and borders for the Earths, ' +
 		                        'jump to locations of your choice, undo/redo any spatial movements, and create links to your views.</p>' +

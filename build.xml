@@ -26,6 +26,7 @@
 		<echo message="" />
 		<echo message="clean       --> Clean test reports dir" />
 		<echo message="jsunit_test --> Unit test javascript" />
+		<echo message="js.concatenate --> combine js into one file" />
 		<echo message="js.minify   --> shrink JavaScript files" />
 		<echo message="css.minify  --> shrink CSS files" />
 		<echo message="build       --> Build application" />
@@ -49,7 +50,7 @@
 		</subant>
 	</target>
 
-	<target name="js.minify">
+	<target name="js.concatenate">
 		<mkdir dir="${build.dir}/js" />
 		<mkdir dir="${build.dir}/concatenated" />
 
@@ -86,17 +87,9 @@
 				</not>
 			</fileset>
 		</concat>
+	</target>
 
-		<apply executable="java" parallel="false" failonerror="true">
-			<fileset dir="${build.dir}/concatenated" includes="*.js" />
-			<arg line="-jar" />	
-			<arg path="yuicompressor.jar" />
-			<srcfile />
-			<arg line="-o" />
-			<mapper type="glob" from="*.js" to="${build.dir}/js/*-min-2.js" />
-			<targetfile/>
-		</apply>
-	
+	<target name="js.minify" depends="js.concatenate">
 		<apply executable="java" parallel="false" failonerror="true">
 			<filelist dir="${src.dir}/js/org/anotherearth/" files="main_container.js, Pakistan_container.js" />
 			<arg line="-jar" />	
@@ -132,6 +125,26 @@
 	</target>
 
 	<target name="build" depends="clean, css.minify, js.minify">
+    <copy todir="${build.dir}" preservelastmodified="true">
+			<fileset dir="${src.dir}" id="not.license">
+				<include name="**/*.*" />
+				<exclude name="js/license.js" />
+			</fileset>
+		</copy>
+		
+		<!-- should be separate target, probably -->
+		<exec command="egrep \"\(console|alert\)\" ${build.dir} -R --exclude=\"build.xml\" | wc -l" outputproperty="debug.count" />
+		<echo message="DEBUG MESSAGE: ${debug.count}" />
+
+		<condition property="debug.found">
+    	<not>
+        <equals arg1="${debug.count}" arg2="0"/>
+    	</not>
+		</condition>
+		<fail if="debug.found" message="Found debug text, either 'console' or 'alert' in files ${debug.count}" />
+	</target>
+
+	<target name="build-dev" depends="clean, css.minify, js.concatenate">
 		<copy todir="${build.dir}" preservelastmodified="true">
 			<fileset dir="${src.dir}" id="not.license">
 				<include name="**/*.*" />
@@ -140,7 +153,21 @@
 		</copy>
 	</target>
 
-	<target name="deploy" depends="build" description="Deploy application">
+	
+	<target name="deploy-dev" depends="build-dev" description="Deploy application">
+		<delete dir="${deploy.path}/anotherearth" />
+
+		<copy todir="${deploy.path}/${name}" preservelastmodified="true">
+			<fileset dir="${build.dir}">
+				<exclude name="**/.svn/**" />
+				<include name="**/*.*" />
+			</fileset>
+		</copy>
+
+		<delete dir="${build.dir}" />
+	</target>
+
+	<target name="deploy-prod" depends="build" description="Deploy application">
 		<delete dir="${deploy.path}/anotherearth" />
 
 		<copy todir="${deploy.path}/${name}" preservelastmodified="true">
