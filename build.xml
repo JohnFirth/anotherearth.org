@@ -91,6 +91,15 @@
 
 	<target name="js.minify" depends="js.concatenate">
 		<apply executable="java" parallel="false" failonerror="true">
+			<fileset dir="${build.dir}/concatenated" includes="*.js" />
+			<arg line="-jar" />	
+			<arg path="yuicompressor.jar" />
+			<srcfile />
+			<arg line="-o" />
+			<mapper type="glob" from="*.js" to="${build.dir}/js/*-min-2.js" />
+			<targetfile/>
+		</apply>
+		<apply executable="java" parallel="false" failonerror="true">
 			<filelist dir="${src.dir}/js/org/anotherearth/" files="main_container.js, Pakistan_container.js" />
 			<arg line="-jar" />	
 			<arg path="yuicompressor.jar" />
@@ -133,8 +142,14 @@
 		</copy>
 		
 		<!-- should be separate target, probably -->
-		<exec command="egrep \"\(console|alert\)\" ${build.dir} -R --exclude=\"build.xml\" | wc -l" outputproperty="debug.count" />
-		<echo message="DEBUG MESSAGE: ${debug.count}" />
+	
+		<exec executable="/bin/egrep" outputproperty="debug.count-text" osfamily="unix">
+			<arg line="'console|alert' ${build.dir} -R --exclude=&quot;build.xml&quot;" />
+		</exec>
+		<exec executable="/usr/bin/wc" inputstring="${debug.count-text}" outputproperty="debug.count">
+			<arg value="-l" />
+		</exec>
+		<echo message="the number of times that 'console' or 'alert' were found was: ${debug.count}" />
 
 		<condition property="debug.found">
     	<not>
