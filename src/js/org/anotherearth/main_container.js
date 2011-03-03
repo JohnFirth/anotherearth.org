@@ -46,11 +46,11 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 											  true,
 											  true);
 		var welcomeText = document.createElement('div');
-		welcomeText.innerHTML = '<p>This application gives you a number of tools with which you can easily ' +
-		                        'and comprehensively compare two maps of the Earth, using the Google Earth browser plugin. ' +
-		                        'These include the ability to synchronize the movement of two Earths, ' + 
-		                        'select layers such as buildings, roads and borders for the Earths, ' +
-		                        'jump to locations of your choice, undo/redo any spatial movements, and create links to your views.</p>' +
+		welcomeText.innerHTML = '<p>This application allows you to compare two maps easily and comprehensively, ' +
+		                        'using the Google Earth browser plugin. ' +
+					'An example use would be comparing two maps of the same place at different times; ' +
+		                        'noteworthy comparisons can be saved as URL links. ' +
+		                        'In addition, movement of the Earths can be synchronized, movements undone and redone, and features such as buildings, roads and borders added.</p>' +
 								            //'<p>Please see the <a href="Pakistan_floods/index.html">sub-site dedicated to the recent flooding in Pakistan</a>.</p>' +
 		                        '<p>Please refer to Google\'s documentation ' +
 		                        'for guides to Google Earth and its navigation control.</p>' +
