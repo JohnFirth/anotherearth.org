@@ -133,7 +133,16 @@
 		<delete dir="${build.dir}/concatenated" />
 	</target>
 
-	<target name="js.debug-screen" description="checks that no debug statements, i.e. those containing 'console' or 'alert' remain in the app">
+	<target name="build" depends="clean, css.minify, js.minify">
+    <copy todir="${build.dir}" preservelastmodified="true">
+			<fileset dir="${src.dir}" id="not.license">
+				<include name="**/*.*" />
+				<exclude name="js/license.js" />
+			</fileset>
+		</copy>
+		
+		<!-- should be separate target, probably -->
+	
 		<exec executable="/bin/egrep" outputproperty="debug.count-text" osfamily="unix">
 			<arg line="'console|alert' ${build.dir} -R --exclude=&quot;build.xml&quot;" />
 		</exec>
@@ -150,16 +159,7 @@
 		<fail if="debug.found" message="Found debug text, either 'console' or 'alert' in files ${debug.count}" />
 	</target>
 
-	<target name="build-prod" depends="clean, css.minify, js.debug-screen, js.minify">
-    <copy todir="${build.dir}" preservelastmodified="true">
-			<fileset dir="${src.dir}" id="not.license">
-				<include name="**/*.*" />
-				<exclude name="js/license.js" />
-			</fileset>
-		</copy>
-	</target>
-
-	<target name="build-dev" description="build unminified code for development/debug purposes" depends="clean, css.minify, js.concatenate">
+	<target name="build-dev" depends="clean, css.minify, js.concatenate">
 		<copy todir="${build.dir}" preservelastmodified="true">
 			<fileset dir="${src.dir}" id="not.license">
 				<include name="**/*.*" />
@@ -167,14 +167,14 @@
 			</fileset>
 		</copy>
 	</target>
+
 	
-	<target name="deploy-dev" depends="build-dev" description="deploy application with unminified code">
+	<target name="deploy-dev" depends="build-dev" description="Deploy application">
 		<delete dir="${deploy.path}/anotherearth" />
 
 		<copy todir="${deploy.path}/${name}" preservelastmodified="true">
 			<fileset dir="${build.dir}">
-				<exclude name="**/.git/**" />
-				<exclude name="**/.gitignore/**" />
+				<exclude name="**/.svn/**" />
 				<include name="**/*.*" />
 			</fileset>
 		</copy>
@@ -182,16 +182,80 @@
 		<delete dir="${build.dir}" />
 	</target>
 
-	<target name="deploy-prod" depends="build-prod" description="Deploy application with minified code">
+	<target name="deploy-prod" depends="build" description="Deploy application">
 		<delete dir="${deploy.path}/anotherearth" />
 
 		<copy todir="${deploy.path}/${name}" preservelastmodified="true">
 			<fileset dir="${build.dir}">
-				<exclude name="**/.git/**" />
-				<exclude name="**/.gitignore/**" />
+				<exclude name="**/.svn/**" />
+				<include name="**/*.*" />
 			</fileset>
 		</copy>
 
 		<delete dir="${build.dir}" />
 	</target>
+
+	<!-- ============================================================== -->
+	<!-- Tomcat tasks  -->
+	<!-- ============================================================== -->
+
+	<!--
+	<path id="catalina-ant-classpath">
+			<fileset dir="${appserver.lib}">
+					<include name="catalina-ant.jar"/>
+			</fileset>
+	</path>
+
+	<taskdef name="install" classname="org.apache.catalina.ant.InstallTask">
+			<classpath refid="catalina-ant-classpath"/>
+	</taskdef>
+	<taskdef name="reload" classname="org.apache.catalina.ant.ReloadTask">
+			<classpath refid="catalina-ant-classpath"/>
+	</taskdef>
+	<taskdef name="list" classname="org.apache.catalina.ant.ListTask">
+			<classpath refid="catalina-ant-classpath"/>
+	</taskdef>
+	<taskdef name="start" classname="org.apache.catalina.ant.StartTask">
+			<classpath refid="catalina-ant-classpath"/>
+	</taskdef>
+	<taskdef name="stop" classname="org.apache.catalina.ant.StopTask">
+			<classpath refid="catalina-ant-classpath"/>
+	</taskdef>
+
+	<target name="install" description="Install application in Tomcat">
+			<install url="${tomcat.manager.url}"
+							 username="${tomcat.manager.username}"
+							 password="${tomcat.manager.password}"
+							 path="/${name}"
+							 war="${name}"/>
+	</target>
+
+	<target name="reload" description="Reload application in Tomcat">
+			<reload url="${tomcat.manager.url}"
+							 username="${tomcat.manager.username}"
+							 password="${tomcat.manager.password}"
+							 path="/${name}"/>
+	</target>
+
+	<target name="start" description="Start Tomcat application">
+			<start url="${tomcat.manager.url}"
+							 username="${tomcat.manager.username}"
+							 password="${tomcat.manager.password}"
+							 path="/${name}"/>
+	</target>
+
+	<target name="stop" description="Stop Tomcat application">
+			<stop url="${tomcat.manager.url}"
+							 username="${tomcat.manager.username}"
+							 password="${tomcat.manager.password}"
+							 path="/${name}"/>
+	</target>
+
+	<target name="list" description="List Tomcat applications">
+			<list url="${tomcat.manager.url}"
+							 username="${tomcat.manager.username}"
+							 password="${tomcat.manager.password}"/>
+	</target>
+-->
+<!-- End Tomcat tasks -->
 </project>
