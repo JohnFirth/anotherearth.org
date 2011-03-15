@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="anotherearth" default="usage" basedir=".">
+<project name="anotherearth" default="deploy-prod" basedir=".">
 
 	<description>Tests, and deploys the two maps project.</description>
 
@@ -17,28 +17,6 @@
 		</fileset>	
 	</path>
 
-	<target name="usage">
-		<echo message="" />
-		<echo message="${name} build file" />
-		<echo message="-----------------------------------" />
-		<echo message="" />
-		<echo message="Available targets are:" />
-		<echo message="" />
-		<echo message="clean       --> Clean test reports dir" />
-		<echo message="jsunit_test --> Unit test javascript" />
-		<echo message="js.concatenate --> combine js into one file" />
-		<echo message="js.minify   --> shrink JavaScript files" />
-		<echo message="css.minify  --> shrink CSS files" />
-		<echo message="build       --> Build application" />
-		<echo message="deploy      --> Deploy application as directory" />
-		<echo message="install     --> Install application in Tomcat" />
-		<echo message="reload      --> Reload application in Tomcat" />
-		<echo message="start       --> Start Tomcat application" />
-		<echo message="stop        --> Stop Tomcat application" />
-		<echo message="list        --> List Tomcat applications" />
-		<echo message=""/>
-	</target>
-	
 	<target name="clean">
 		<delete dir="${build.dir}" />
 	</target>
