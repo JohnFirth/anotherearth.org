@@ -167,7 +167,6 @@
 			</fileset>
 		</copy>
 	</target>
-
 	
 	<target name="deploy-dev" depends="build-dev" description="Deploy application">
 		<delete dir="${deploy.path}/anotherearth" />
@@ -175,6 +174,7 @@
 		<copy todir="${deploy.path}/${name}" preservelastmodified="true">
 			<fileset dir="${build.dir}">
 				<exclude name="**/.svn/**" />
+				<exclude name="**/.git/**" />
 				<include name="**/*.*" />
 			</fileset>
 		</copy>
@@ -188,6 +188,7 @@
 		<copy todir="${deploy.path}/${name}" preservelastmodified="true">
 			<fileset dir="${build.dir}">
 				<exclude name="**/.svn/**" />
+				<exclude name="**/.git/**" />
 				<include name="**/*.*" />
 			</fileset>
 		</copy>
