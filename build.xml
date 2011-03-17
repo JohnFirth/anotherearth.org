@@ -78,7 +78,7 @@
 			<targetfile />
 		</apply>
 		<apply executable="java" parallel="false" failonerror="true">
-			<filelist dir="${src.dir}/js/org/anotherearth/" files="main_container.js, Pakistan_container.js" />
+			<filelist dir="${src.dir}/js/org/anotherearth/" files="main_container.js, Pakistan_container.js, Japan_container.js" />
 			<arg line="-jar" />	
 			<arg path="yuicompressor.jar" />
 			<srcfile />
@@ -152,10 +152,14 @@
 		<copy todir="${build.dir}/js" preservelastmodified="true">
 			<fileset dir="${build.dir}/js/org/anotherearth">
 				<include name="main_container.js" />
+				<include name="Japan_container.js" />
 			</fileset>
 		</copy>
 
-		<replace file="${build.dir}/index.html" token="-min.js" value=".js" />
+		<replace dir="${build.dir}" value=".js">
+  		<include name="**/*.html"/>
+  		<replacetoken>-min.js</replacetoken>
+		</replace>
 	</target>
 	
 	<target name="deploy-dev" depends="build-unminified" description="Deploy application">
