@@ -180,7 +180,7 @@ org.anotherearth.view.LockableEarth = function(canvasDivId, earthsController, in
 		
 		//putting date setting last in case that historical data for the original location differs from that for the new location,
 		//assuming this matters
-		if (date !== null) {
+		if (date != null) {//i.e. is null or undefined
 			var timeStamp = ge.createTimeStamp("");
 			timeStamp.getWhen().set(date);		
 			geTime.setTimePrimitive(timeStamp);

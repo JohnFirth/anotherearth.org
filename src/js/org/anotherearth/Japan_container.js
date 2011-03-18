@@ -26,14 +26,14 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 			initialLocks[value] = ((queryStringValues[value] !== null) ? parseInt(queryStringValues[value], 10) : 1);
 		}
 
-		initialLCameraProps.lat  = 28.345036;
-		initialLCameraProps.lng  = 69.447603;
-		initialLCameraProps.alt  = 70000;
+		initialLCameraProps.lat  = 38.99;
+		initialLCameraProps.lng  = 138.37;
+		initialLCameraProps.alt  = 2866609;
 		initialLCameraProps.tilt = 0;
 		initialLCameraProps.head = 0;
-		initialRCameraProps.lat  = 28.345036;
-		initialRCameraProps.lng  = 69.447603;
-		initialRCameraProps.alt  = 70000;
+		initialRCameraProps.lat  = 38.99;
+		initialRCameraProps.lng  = 138.37;
+		initialRCameraProps.alt  = 2866609;
 		initialRCameraProps.tilt = 0;
 		initialRCameraProps.head = 0;
 
@@ -46,7 +46,16 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 																				 true,
 																				 true);
 		var welcomeText = document.createElement('div');
-		welcomeText.innerHTML = '<p>The right hand Earth shows damage from the Japanese earthquake and tsunami of March 2011</p>';
+		welcomeText.innerHTML = '<p>The righthand Earth shows imagery from the aftermath of the Japanese earthquake and tsunami of March 2011.' +
+                            'The lefthand Earth shows imagery preceding this event. The motion of the Earths is locked together, allowing a ' +
+                            'before-and-after comparison to be made</p>' +
+                            '<p>Please follow this link to find out ways in which you can help: <a href="http://www.google.com/crisisresponse/japanquake2011.html">' +
+                            'http://www.google.com/crisisresponse/japanquake2011.html</a></p>' +
+		                        '<p>Please refer to Google\'s documentation ' +
+		                        'for guides to Google Earth and its navigation control.</p>' +
+		                        '<p>If your browser\'s preferred language isn\'t English then using a ' +
+		                        'translator, <span id=\"google_branding\"></span>, ' +
+		                        'I\'ve attempted to convert the text.</p>';
 		
 		if (!$.support.leadingWhitespace) {//if is IE
 			welcomeText.innerHTML += '<p id="IE_message">Sorry, but to ensure an optimal experience with this site, I recommend using the ' +
@@ -266,7 +275,7 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 		})();
 
 		var kmlLoadedCallback = function() {
-			coms.rightEarth.setProperties(28.27155, 69.349811, 23842.296337, 60.638956, 65.863623);
+			coms.rightEarth.setProperties(38.99, 138.37, 2866609, 0, 0, null);
 			setTimeout("org.anotherearth.Container.getInstance().getComponent('rightEarth').toggleExtra('time')", 1000);
 		};
 
@@ -288,7 +297,7 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 				if (viewportHeight <= (($(coms.controlPanel.getContainingElement()).outerHeight()) + panelTopOffset)) {
 					coms.controlPanel.closeSubPanels();
 				}
-				coms.rightEarth.addKmlFromUrl('http://www.anotherearth.org/Japan.kml', kmlLoadedCallback);
+				coms.rightEarth.addKmlFromUrl('http://www.anotherearth.org/Japan_earthquake2011_nl.kml', kmlLoadedCallback);
 			}
 		};
 
