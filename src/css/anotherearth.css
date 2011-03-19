@@ -20,7 +20,7 @@ body {
 	padding-right: 1em;
 	padding-bottom: 0.6em;
 	position: absolute;
-	z-index: 10;
+	z-index: 40010;/*i.e. most likely higher than anyone else's popup panels*/
 	color: #555555;
 	border-style:  solid;
 	border-color:  #AAAAAA;
@@ -117,7 +117,7 @@ body {
 }
 
 input label h4 button  {
-	z-index:10;
+	z-index: 40010;/*i.e. most likely higher than anyone else's popup panels*/
 	cursor: pointer;
 }
 
@@ -159,7 +159,7 @@ input label h4 button  {
 	margin: 0 auto;
 	top:   7em;
 	width: 30em;
-	z-index: 11;
+	z-index: 40011;/*i.e. most likely higher than anyone else's popup panels*/
 }
 
 #control_panel {
