@@ -47,7 +47,7 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 																				 true);
 		var welcomeText = document.createElement('div');
 		welcomeText.innerHTML = '<p>The righthand Earth shows imagery from the aftermath of the Japanese earthquake and tsunami of March 2011.' +
-                            'The lefthand Earth shows imagery preceding this event. The motion of the Earths is locked together, allowing a ' +
+                            'The lefthand Earth shows imagery preceding this event. The motions of the Earths are locked together, allowing a ' +
                             'before-and-after comparison to be made</p>' +
                             '<p>Please follow this link to find out ways in which you can help: <a href="http://www.google.com/crisisresponse/japanquake2011.html">' +
                             'http://www.google.com/crisisresponse/japanquake2011.html</a></p>' +
