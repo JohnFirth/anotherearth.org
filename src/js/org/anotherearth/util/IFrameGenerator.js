@@ -10,7 +10,7 @@ org.anotherearth.util.IFrameGenerator.createFrame = function() {
 	iframe.setAttribute('allowtransparency', 'false');
 	iframe.scrolling = 'no';
 	iframe.frameBorder = '0';
-	iframe.src = (navigator.userAgent.indexOf('MSIE 6') >= 0) ? '' : 'javascript:void(0);';
+	iframe.src = (navigator.userAgent.indexOf('MSIE 6') >= 0) ? '' : 'blank.html';
 	iframe.style.position = 'absolute';
 	iframe.style.opacity = 0;
 	iframe.style.top = 0;
