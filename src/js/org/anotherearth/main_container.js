@@ -39,19 +39,19 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 
 		coms.welcomePanel = new ae.view.Panel(ae.WELCOME_PANEL_BODY_ID,
 		                                      ae.WELCOME_PANEL_HEADER_ID,
-									          ae.WELCOME_PANEL_ID,
-											  'Welcome to anotherearth.org',
-											  body,
-											  true,
-											  true,
-											  true);
+		                                      ae.WELCOME_PANEL_ID,
+		                                      'Welcome to anotherearth.org',
+		                                      body,
+		                                      true,
+		                                      true,
+		                                      true);
 		var welcomeText = document.createElement('div');
 		welcomeText.innerHTML = '<p>This application allows you to compare two maps easily and comprehensively, ' +
 		                        'using the Google Earth browser plugin. ' +
-                  					'An example use would be comparing two maps of the same place at different times; ' +
+		                        'An example use would be comparing two maps of the same place at different times; ' +
 		                        'noteworthy comparisons can be saved as URL links. ' +
 		                        'In addition, movement of the Earths can be synchronized, movements undone and redone, and features such as buildings, roads and borders added.</p>' +
-								            '<p>Please see the <a href="Japan_Earthquake_2011.html">sub-site dedicated to the Japanese tsunami of March 2011</a>.</p>' +
+		                        '<p>Please see the <a href="Japan_Earthquake_2011.html">sub-site dedicated to the Japanese tsunami of March 2011</a>.</p>' +
 		                        '<p>Please refer to Google\'s documentation ' +
 		                        'for guides to Google Earth and its navigation control.</p>' +
 		                        '<p>If your browser\'s preferred language isn\'t English then using a ' +
@@ -73,13 +73,13 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 		coms.leftEarth	      = new ae.view.LockableEarth(ae.L_EARTH_ID, coms.earthsController, initialLCameraProps);
 		coms.rightEarth       = new ae.view.LockableEarth(ae.R_EARTH_ID, coms.earthsController, initialRCameraProps);
 		coms.controlPanel     = new ae.view.ControlPanel(ae.CP_BUTTONS_CONTAINER_ID,//TODO: consider using builder pattern
-														 ae.CP_HEADER_ID,
-														 ae.CP_ID,
-														 'Control Panel',
-														 body,
-														 true,
-														 true,
-														 false);
+		                            ae.CP_HEADER_ID,
+		                            ae.CP_ID,
+		                            'Control Panel',
+		                            body,
+		                            true,
+		                            true,
+		                            false);
 		coms.earthsController.setLeftEarth(coms.leftEarth);
 		coms.earthsController.setRightEarth(coms.rightEarth);
 		coms.earthsController.setControlPanel(coms.controlPanel);
@@ -119,17 +119,17 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 		//gui objects
 			//checkboxes
 		coms.altLockingCheckbox     = new ae.view.TwoEarthsCheckbox("altitudes",
-																	ae.CP_ALTITUDE_LOCK_CHECKBOX_ID,
-																	coms.earthsManager);
+		                                                            ae.CP_ALTITUDE_LOCK_CHECKBOX_ID,
+		                                                            coms.earthsManager);
 		coms.latLngLockingCheckbox  = new ae.view.TwoEarthsCheckbox("latitudes and longitudes",
-																	ae.CP_VIEW_CENTER_LOCK_CHECKBOX_ID,
-																	coms.earthsManager);
+		                                                            ae.CP_VIEW_CENTER_LOCK_CHECKBOX_ID,
+		                                                            coms.earthsManager);
 		coms.tiltLockingCheckbox    = new ae.view.TwoEarthsCheckbox("tilts",
-																	ae.CP_TILT_LOCK_CHECKBOX_ID,
-																	coms.earthsManager);
+		                                                            ae.CP_TILT_LOCK_CHECKBOX_ID,
+		                                                            coms.earthsManager);
 		coms.headingLockingCheckbox = new ae.view.TwoEarthsCheckbox("headings",
-																	ae.CP_HEAD_LOCK_CHECKBOX_ID,
-																	coms.earthsManager);
+		                                                            ae.CP_HEAD_LOCK_CHECKBOX_ID,
+		                                                            coms.earthsManager);
 
 		coms.altLockingCheckbox.addClickEventListener(coms.toggleVerticalMovementLockCommand);
 		coms.latLngLockingCheckbox.addClickEventListener(coms.toggleHorizontalMovementLockCommand);
