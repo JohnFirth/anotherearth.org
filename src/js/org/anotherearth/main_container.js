@@ -247,12 +247,12 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 		                     ];
 		var REarthOptions = [$.extend(true, {}, borderOption),           //deep copies of the option objects
 		                     $.extend(true, {}, hiResBuildingsOption),
-                             $.extend(true, {}, loResBuildingsOption),
+                         $.extend(true, {}, loResBuildingsOption),
 		                     $.extend(true, {}, latLngGridlinesOption),
 		                     $.extend(true, {}, roadsOption),
-                             $.extend(true, {}, sunOption),
+                         $.extend(true, {}, sunOption),
 		                     $.extend(true, {}, terrainOption),
-                             $.extend(true, {}, timeOption)
+                         $.extend(true, {}, timeOption)
 		                     //$.extend(true, {}, atmosphereOption)
                              ];
 		

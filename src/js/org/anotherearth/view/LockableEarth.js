@@ -56,6 +56,10 @@ org.anotherearth.view.LockableEarth = function(canvasDivId, earthsController, in
 		geLayerRoot = instance.getLayerRoot();
 		geTime      = instance.getTime();
 		
+		geTime.setHistoricalImageryEnabled(true);
+		//enabling historical imagery causes the control to be displayed, which is not necessarily desired
+		geTime.getControl().setVisibility(ge.VISIBILITY_HIDE);
+		
 		ge.getNavigationControl().setVisibility(ge.VISIBILITY_AUTO);
 		ALTITUDE_TYPE = ge.ALTITUDE_ABSOLUTE;
 		geOptions.setScaleLegendVisibility(true);
@@ -107,10 +111,10 @@ org.anotherearth.view.LockableEarth = function(canvasDivId, earthsController, in
 				earthsController.setMoveInitializingEarth(self);
 			}
 			else if (moveInitializingEarth !== self) {//this is a catch for rare instances, happening exclusively during synchronized dragging,
-				return;                               //in which a camera moves twice after it has had its position set, thereby bypassing the
+				return;                                 //in which a camera moves twice after it has had its position set, thereby bypassing the
 			}                                         //movement-ignoring condition above and typically causing movement to abruptly halt.
 			                                          //since the movement-ignoring condition is used for other types of movement (other than dragging)
-													  //it has not been replaced by this commented condition.
+			                                          //it has not been replaced by this commented condition.
 			earthsController.moveOtherEarthIfLocked(self);
 		});
 		google.earth.addEventListener(geView, 'viewchangeend', function() {
@@ -128,7 +132,7 @@ org.anotherearth.view.LockableEarth = function(canvasDivId, earthsController, in
 		earthsController.respondToEarthFullyLoading();
 	};
 	
-	var _initEarthFailed = function(errorCode){//this function is mandatory for loading the plugin but unnecessary for me
+	var _initEarthFailed = function(errorCode){//this function is mandatory for loading the plugin. TODO something?
 	};
 	
 	var _createEarthCanvas = function() {
@@ -139,19 +143,19 @@ org.anotherearth.view.LockableEarth = function(canvasDivId, earthsController, in
 	};
 	
 	var _getEarthDate = function() {
-		  var tp = geTime.getTimePrimitive();
-		  var time;
+		var tp = geTime.getTimePrimitive();
+		var time;
 
-		  if (tp.getType() == 'KmlTimeSpan') {
-			  time = tp.getBegin().get();
-		  } else {
-			  time = tp.getWhen().get();
-		  }
+		if (tp.getType() == 'KmlTimeSpan') {
+			time = tp.getBegin().get();
+		} else {
+			time = tp.getWhen().get();
+		}
 
-		  var re = new RegExp("^(\\d{4})-(\\d{2})-(\\d{2})");
+		var re = new RegExp("^(\\d{4})-(\\d{2})-(\\d{2})");
 
-		  var regExMatches = time.match(re);
-		  return regExMatches[0];
+		var regExMatches = time.match(re);
+		return regExMatches[0];
 	};
 
 	//privileged methods
