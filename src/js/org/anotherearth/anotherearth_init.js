@@ -38,7 +38,7 @@ org.anotherearth.init = function() {
 
 		if(!$.support.leadingWhitespace) {//if is IE
 			$('.panel').css('padding-bottom', '1em').css('left', '240px');//truncates them for some reason and since immobile, cannot be blocking search boxes
-			$('#' + org.anotherearth.CP_ID).css('width', '18em').css('left', '240px');//IE fills available space with div if no width is given
+			$('#' + org.anotherearth.CP_ID).css('width', '18em').css('left', '400px');//IE fills available space with div if no width is given
 			$('.drag_handle').remove();
 		}
 
