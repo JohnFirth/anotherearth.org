@@ -56,10 +56,6 @@ org.anotherearth.view.LockableEarth = function(canvasDivId, earthsController, in
 		geLayerRoot = instance.getLayerRoot();
 		geTime      = instance.getTime();
 		
-		geTime.setHistoricalImageryEnabled(true);
-		//enabling historical imagery causes the control to be displayed, which is not necessarily desired
-		geTime.getControl().setVisibility(ge.VISIBILITY_HIDE);
-		
 		ge.getNavigationControl().setVisibility(ge.VISIBILITY_AUTO);
 		ALTITUDE_TYPE = ge.ALTITUDE_ABSOLUTE;
 		geOptions.setScaleLegendVisibility(true);
@@ -90,6 +86,7 @@ org.anotherearth.view.LockableEarth = function(canvasDivId, earthsController, in
 		                   initialEarthProperties.head,
 		                   false,
 		                   initialEarthProperties.date);
+		
 		earthsController.saveCameraProperties(false);//this method won't do anything when called by first map to be initialized
 		geWindow.setVisibility(true);
 
@@ -111,8 +108,8 @@ org.anotherearth.view.LockableEarth = function(canvasDivId, earthsController, in
 				earthsController.setMoveInitializingEarth(self);
 			}
 			else if (moveInitializingEarth !== self) {//this is a catch for rare instances, happening exclusively during synchronized dragging,
-				return;                                 //in which a camera moves twice after it has had its position set, thereby bypassing the
-			}                                         //movement-ignoring condition above and typically causing movement to abruptly halt.
+				return;                               //in which a camera moves twice after it has had its position set, thereby bypassing the
+			}                                         //movement-ignoring condition above and typically causing movement to halt abruptly.
 			                                          //since the movement-ignoring condition is used for other types of movement (other than dragging)
 			                                          //it has not been replaced by this commented condition.
 			earthsController.moveOtherEarthIfLocked(self);
@@ -129,7 +126,7 @@ org.anotherearth.view.LockableEarth = function(canvasDivId, earthsController, in
 			var isCurrentPropSetOverwritten = !earthsController.getIsTimeElapsedSufficientForSave();
 			earthsController.saveCameraProperties(isCurrentPropSetOverwritten);
 		});
-		earthsController.respondToEarthFullyLoading();
+		earthsController.respondToEarthFullyLoading(self);
 	};
 	
 	var _initEarthFailed = function(errorCode){//this function is mandatory for loading the plugin. TODO something?
@@ -166,6 +163,12 @@ org.anotherearth.view.LockableEarth = function(canvasDivId, earthsController, in
 			throw new ReferenceError(errorMessage);
 		}
 		
+		if (date != null) {//i.e. is null or undefined
+			var timeStamp = ge.createTimeStamp("");
+			timeStamp.getWhen().set(date);		
+			geTime.setTimePrimitive(timeStamp);
+		}
+		
 		var camera = geView.copyAsCamera(ALTITUDE_TYPE);
 		
 		if (isNextMoveIgnored) {//e.g. if earths are locked together, this will prevent an infinite loop of property setting between the Earths
@@ -181,14 +184,6 @@ org.anotherearth.view.LockableEarth = function(canvasDivId, earthsController, in
 		geOptions.setFlyToSpeed(ge.SPEED_TELEPORT);
 		geView.setAbstractView(camera);
 		geOptions.setFlyToSpeed(REGULAR_FLY_TO_SPEED);
-		
-		//putting date setting last in case that historical data for the original location differs from that for the new location,
-		//assuming this matters
-		if (date != null) {//i.e. is null or undefined
-			var timeStamp = ge.createTimeStamp("");
-			timeStamp.getWhen().set(date);		
-			geTime.setTimePrimitive(timeStamp);
-		}
 	};
 	
 	this.getProperties = function() {
@@ -200,7 +195,7 @@ org.anotherearth.view.LockableEarth = function(canvasDivId, earthsController, in
 			var props = {};
 			var camera    = geView.copyAsCamera(ALTITUDE_TYPE);	
 			
-			//Props given to six decimal places - any more precision unnecessary even at lowest altitudes.
+			//Props given to six decimal places - any more precision unnecessary
 			var oneMillion = Math.pow(10,6);
 			props.lat  = Math.round(camera.getLatitude()  * oneMillion)/oneMillion;
 			props.lng  = Math.round(camera.getLongitude() * oneMillion)/oneMillion;
@@ -244,14 +239,17 @@ org.anotherearth.view.LockableEarth = function(canvasDivId, earthsController, in
 				break;
 			case 'time':
 				var timeControl = geTime.getControl();
+
 				if (geTime.getHistoricalImageryEnabled()) {
-					timeControl.getVisibility() ? timeControl.setVisibility(ge.VISIBILITY_HIDE) : timeControl.setVisibility(ge.VISIBILITY_SHOW);
-				}
-				else if (timeControl.getVisibility()) {
-					timeControl.setVisibility(false);
+					if(timeControl.getVisibility()) {
+						timeControl.setVisibility(ge.VISIBILITY_HIDE);
+					} else {
+						timeControl.setVisibility(ge.VISIBILITY_SHOW);
+					}
 				}
 				else {
 					geTime.setHistoricalImageryEnabled(true);
+					timeControl.setVisibility(ge.VISIBILITY_SHOW);
 				}
 				break;
 			default:
@@ -266,6 +264,9 @@ org.anotherearth.view.LockableEarth = function(canvasDivId, earthsController, in
 	};
 	this.setCanvasPositionAndSize = function(top, left, width, height) {
 		$(earthCanvas).css('top', top).css('left', left).css('width', width).css('height', height);
+	};
+	this.getHistoricalImageryEnabled = function() {
+		return ge.getTime().getHistoricalImageryEnabled();
 	};
 	this.addKmlFromUrl = function(newKmlUrl, newKmlLoadedCallback) {
 		kmlLoadedCallback = new _KmlLoadedCallback(newKmlLoadedCallback);

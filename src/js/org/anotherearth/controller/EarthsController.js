@@ -15,7 +15,7 @@ org.anotherearth.controller.EarthsController = function(earthsManager, urlManage
 	var timeOfPenultimateAttemptedSave = null;
 	var minTimeBetweenSaves = 2000; //ms
 	var moveInitializingEarth = null;
-	var responseToEarthLoading = null;
+	var _responseToEarthLoading = null;
 
 	//private methods
 
@@ -62,7 +62,7 @@ org.anotherearth.controller.EarthsController = function(earthsManager, urlManage
 
 	//privileged methods
 	this.setEarthLoadingResponseCallback = function (callback) {
-		responseToEarthLoading = callback;
+		_responseToEarthLoading = callback;
 	};
 	this.getMoveInitializingEarth = function() {
 		return moveInitializingEarth;
@@ -88,8 +88,8 @@ org.anotherearth.controller.EarthsController = function(earthsManager, urlManage
 		timeOfLastAttemptedSave        = null;
 		timeOfPenultimateAttemptedSave = null;
 	};
-	this.respondToEarthFullyLoading = function() {
-		responseToEarthLoading();
+	this.respondToEarthFullyLoading = function(earth) {
+		_responseToEarthLoading(earth);
 	};
 	this.moveOtherEarthIfLocked = function(givingEarth) {
 		movingEarth = givingEarth;

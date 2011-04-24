@@ -36,7 +36,6 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 		initialRCameraProps.tilt = parseFloat(urlManager.getURLQueryStringValue('RTilt')) || ae.DEFAULT_R_EARTH_COORDS.TILT;
 		initialRCameraProps.head = parseFloat(urlManager.getURLQueryStringValue('RHead')) || ae.DEFAULT_R_EARTH_COORDS.HEAD;
 		initialRCameraProps.date = urlManager.getURLQueryStringValue('RDate')             || null;
-
 		coms.welcomePanel = new ae.view.Panel(ae.WELCOME_PANEL_BODY_ID,
 		                                      ae.WELCOME_PANEL_HEADER_ID,
 		                                      ae.WELCOME_PANEL_ID,
@@ -247,12 +246,12 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 		                     ];
 		var REarthOptions = [$.extend(true, {}, borderOption),           //deep copies of the option objects
 		                     $.extend(true, {}, hiResBuildingsOption),
-                         $.extend(true, {}, loResBuildingsOption),
+                             $.extend(true, {}, loResBuildingsOption),
 		                     $.extend(true, {}, latLngGridlinesOption),
 		                     $.extend(true, {}, roadsOption),
-                         $.extend(true, {}, sunOption),
+		                     $.extend(true, {}, sunOption),
 		                     $.extend(true, {}, terrainOption),
-                         $.extend(true, {}, timeOption)
+                             $.extend(true, {}, timeOption)
 		                     //$.extend(true, {}, atmosphereOption)
                              ];
 		
@@ -290,18 +289,40 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 
 		coms.miscellanySubPanel         = new ae.view.ShrinkableSubPanel("undo/redo and URL link",
 		                                                                 ae.CP_MISC_OPTIONS_SUB_PANEL_ID);			
-
 		
 		/* callbacks on earths and one earth's kml, loading */ 
 		var getLoadedEarths = (function() {
 			var loadedEarths = 0;
 			return function() { return ++loadedEarths; };
 		})();
-
-		var responseToEarthFullyLoading = function() {
-			if (getLoadedEarths() === 2) {
+		
+		coms.enableHistoricalImageryOnEarth = function(earthId) {
+			//historical imagery (and gui time control) cannot be enabled reliably
+			//so need to make multiple attempts if necessary
+			if (earthId === "L") {
 				coms.LEarthOptionSelector.setIsSelected(coms.LEarthOptionSelector.getIndexOfOption("time"), true);
+				if (!coms.leftEarth.getHistoricalImageryEnabled()) {
+					setTimeout("org.anotherearth.Container.getInstance().getComponent('enableHistoricalImageryOnEarth')('L')", 50);
+				}
+			} 
+			else if (earthId === "R") {
 				coms.REarthOptionSelector.setIsSelected(coms.REarthOptionSelector.getIndexOfOption("time"), true);
+				if (!coms.rightEarth.getHistoricalImageryEnabled()) {
+					setTimeout("org.anotherearth.Container.getInstance().getComponent('enableHistoricalImageryOnEarth')('R')", 50);
+				}
+			}
+		};
+
+		var responseToEarthFullyLoading = function(earth) {
+			if (earth === coms.leftEarth) {
+				coms.enableHistoricalImageryOnEarth('L');
+				
+			}
+			else if (earth === coms.rightEarth) {
+				coms.enableHistoricalImageryOnEarth('R');				
+			}
+			
+			if (getLoadedEarths() === 2) {				
 				coms.altLockingCheckbox.setIsChecked(initialLocks.alt);
 				coms.tiltLockingCheckbox.setIsChecked(initialLocks.tilt);
 				coms.latLngLockingCheckbox.setIsChecked(initialLocks.latLng);
@@ -309,9 +330,10 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 				coms.donorRadioButtons.setIsChecked(true, coms.donorRadioButtons.getIndexOf('left_camera'));
 				coms.controlPanel.performNewEarthPropsUpdate();
 				coms.controlPanel.show();
-				//need to set these widths in pixels once the elements have been created to avoid jerkiness and resizing with subpanel and panel shrinking (jQuery flaws)
+				//these lines set the widths in pixels once the elements have been created to avoid jerkiness and resizing with subpanel and panel shrinking (jQuery flaws)
 				$('#' + ae.CP_ID + ' button').width($('#' + ae.CP_ID + ' button').width());
 				$('#' + ae.CP_ID).width($('#' + ae.CP_ID).width());
+
 				var viewportHeight = window.innerHeight ? window.innerHeight : $(window).height();
 				var controlPanelElement = coms.controlPanel.getContainingElement();
 				var panelTopOffset = parseInt(($(controlPanelElement).css('top')).replace(/(\d+)px/, "$1"), 10);

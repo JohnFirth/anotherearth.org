@@ -127,14 +127,13 @@
 		<exec executable="/usr/bin/wc" inputstring="${debug.count-text}" outputproperty="debug.count">
 			<arg value="-l" />
 		</exec>
-		<echo message="the number of times that 'console' or 'alert' were found was: ${debug.count}" />
 
 		<condition property="debug.found">
     	<not>
         <equals arg1="${debug.count}" arg2="0"/>
     	</not>
 		</condition>
-		<fail if="debug.found" message="Found debug text, either 'console' or 'alert' in files ${debug.count}" />
+		<fail if="debug.found" message="Found debug text, either 'console' or 'alert', in files ${debug.count} time(s) in total" />
 	</target>
 
 	<target name="build-unminified" depends="clean, css.minify, js.concatenate">

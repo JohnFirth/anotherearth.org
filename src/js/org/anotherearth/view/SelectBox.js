@@ -114,7 +114,6 @@ org.anotherearth.view.SelectBox = function(options, selectBoxSize, selectBoxText
 			selectedElement = $(options[index].htmlElement);
 			selectedElement.val(newIsSelected);
 		}
-		
 		onClickCommand.execute(selectBox, options[index]);
 	};
 	this.performUndoRedoUpdate = function() {
