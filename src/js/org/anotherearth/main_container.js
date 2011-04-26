@@ -211,7 +211,6 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 		var terrainOption         = {};
 		var sunOption             = {};
 		var atmosphereOption      = {};
-		var timeOption            = {};
 		var latLngGridlinesOption = {};
 		
 		//FIXME options should be an enum equivalent within LockableEarth
@@ -232,16 +231,13 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 		atmosphereOption.value = "atmosphere";
 		latLngGridlinesOption.text  = "grid";
 		latLngGridlinesOption.value = "grid";
-		timeOption.text  = "time control";
-		timeOption.value = "time";
 		var LEarthOptions = [borderOption,
 		                     hiResBuildingsOption,
 		                     loResBuildingsOption,
 		                     latLngGridlinesOption,
 		                     roadsOption,
 		                     sunOption,
-		                     terrainOption,
-		                     timeOption
+		                     terrainOption
 		                     //atmosphereOption//TODO: no one's going to be turning this off, most likely
 		                     ];
 		var REarthOptions = [$.extend(true, {}, borderOption),           //deep copies of the option objects
@@ -250,8 +246,7 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 		                     $.extend(true, {}, latLngGridlinesOption),
 		                     $.extend(true, {}, roadsOption),
 		                     $.extend(true, {}, sunOption),
-		                     $.extend(true, {}, terrainOption),
-                             $.extend(true, {}, timeOption)
+		                     $.extend(true, {}, terrainOption)
 		                     //$.extend(true, {}, atmosphereOption)
                              ];
 		
@@ -268,6 +263,21 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 
 		coms.LEarthOptionSelector.addClickEventListener(coms.toggleEarthExtraCommand);
 		coms.REarthOptionSelector.addClickEventListener(coms.toggleEarthExtraCommand);
+		
+		coms.LEarthToggleTimeControlButton = new ae.view.TwoEarthsButton("toggle left time bar",  ae.CP_L_EARTH_TIME_CONTROL_TOGGLE, coms.earthsManager);
+		coms.REarthToggleTimeControlButton = new ae.view.TwoEarthsButton("toggle right time bar", ae.CP_R_EARTH_TIME_CONTROL_TOGGLE, coms.earthsManager);
+		
+		//TODO: move to separate class
+		org.anotherearth.command.ToggleSpecificEarthExtraCommand = function(earthsController, earthId, extraId) {
+			var earthsController;
+
+			this.execute = function() {
+				earthsController.toggleEarthExtra(earthId, extraId);
+			};
+		};
+
+		coms.LEarthToggleTimeControlButton.addClickEventListener(new org.anotherearth.command.ToggleSpecificEarthExtraCommand(coms.earthsController, "LEarth", "time"));
+		coms.REarthToggleTimeControlButton.addClickEventListener(new org.anotherearth.command.ToggleSpecificEarthExtraCommand(coms.earthsController, "REarth", "time"));
 		
 		//search boxes
 		coms.leftEarthSearch  = new ae.view.SearchBox(coms.leftEarth,  coms.earthsController, ae.L_EARTH_SEARCH_BOX_ID, 'left Earth');
@@ -300,13 +310,13 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 			//historical imagery (and gui time control) cannot be enabled reliably
 			//so need to make multiple attempts if necessary
 			if (earthId === "L") {
-				coms.LEarthOptionSelector.setIsSelected(coms.LEarthOptionSelector.getIndexOfOption("time"), true);
+				coms.earthsController.toggleEarthExtra('LEarth', 'time');
 				if (!coms.leftEarth.getHistoricalImageryEnabled()) {
 					setTimeout("org.anotherearth.Container.getInstance().getComponent('enableHistoricalImageryOnEarth')('L')", 50);
 				}
 			} 
 			else if (earthId === "R") {
-				coms.REarthOptionSelector.setIsSelected(coms.REarthOptionSelector.getIndexOfOption("time"), true);
+				coms.earthsController.toggleEarthExtra('REarth', 'time');
 				if (!coms.rightEarth.getHistoricalImageryEnabled()) {
 					setTimeout("org.anotherearth.Container.getInstance().getComponent('enableHistoricalImageryOnEarth')('R')", 50);
 				}
@@ -357,6 +367,8 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 		coms.cameraPropCopyingSubPanel.addChild(coms.equateCameraTiltsButton);
 		coms.earthOptionsSubPanel.addChild(coms.LEarthOptionSelector);
 		coms.earthOptionsSubPanel.addChild(coms.REarthOptionSelector);
+		coms.earthOptionsSubPanel.addChild(coms.LEarthToggleTimeControlButton);
+		coms.earthOptionsSubPanel.addChild(coms.REarthToggleTimeControlButton);
 		coms.miscellanySubPanel.addChild(coms.undoButton);
 		coms.miscellanySubPanel.addChild(coms.redoButton);
 		coms.miscellanySubPanel.addChild(coms.linkCreatorButton);
