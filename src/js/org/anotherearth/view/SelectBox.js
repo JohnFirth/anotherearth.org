@@ -5,6 +5,7 @@ org.anotherearth = window.org.anotherearth || {};
 org.anotherearth.view = window.org.anotherearth.view || {};
 
 //Composite pattern leaf class
+//TODO: rename to reflect implementation of another earth-specific interfaces
 org.anotherearth.view.SelectBox = function(options, selectBoxSize, selectBoxText, selectBoxId, isMultipleSelectType) {
 	var options = options;//TODO: type checking on these widget elements' arguments - and on the abstract widget elements
 	var selectBoxSize = selectBoxSize;
@@ -14,30 +15,31 @@ org.anotherearth.view.SelectBox = function(options, selectBoxSize, selectBoxText
 	var selectBoxId = selectBoxId;
 	var onClickCommand, containingElement, selectBox;
 	var undoRedoUpdateStrategy, newEarthPropsUpdateStrategy;
-	var multipleSelectCheckBoxes = null;
 
 	//privileged methods
-	this.addClickEventListener = function(command) {
-		onClickCommand = command;
+	this.addClickEventListeners = function(commandFactory) {
+		function _makeClickCallBack(value) {
+			return commandFactory.createParameterizedCommand(value).execute;
+		};
+		
 		if (!isMultipleSelectType) {
 			for (var option in options) {
 				if (options.hasOwnProperty(option)) {
-					$(options[option].htmlElement).click(function() {command.execute(selectBox, this);});
+					$(options[option].htmlElement).click(_makeClickCallBack(option.value));
 				}			
 			}
 		}
 		else {
-			multipleSelectCheckBoxes = [];//FIXME wrong to be populating this array here - also, can't I get programmatic access to this widget?
 			var re = new RegExp(selectBoxId + '\\d+');//This is the form of id assigned by dropdownlist plugin to checkboxes.
-			var inputs = document.getElementsByTagName('input');
+			var inputs = $("input[id^=" + selectBoxId + "]");
 			for (var input in inputs) {
 				if (typeof inputs[input].id !== 'undefined' && inputs[input].id.match(re)) {
-					multipleSelectCheckBoxes.push(inputs[input]);
+					$(inputs[input]).click(_makeClickCallBack(inputs[input].value));
 				}
 			}
-			$(multipleSelectCheckBoxes).click(function() {command.execute(selectBox, this);});
 		}
 	};
+	
 	this.createGUIElements = function() {
 		//define selectbox
 		containingElement = document.createElement('div');

@@ -252,32 +252,26 @@ org.anotherearth.Container = (function() { //singleton with deferred instantiati
 		
 		coms.LEarthOptionSelector = new ae.view.SelectBox(LEarthOptions,
 		                                                  1,
-		                                                  'left Earth',
+		                                                  'left Earth overlays',
 		                                                  ae.CP_L_EARTH_EXTRAS_SELECTOR_ID,
 		                                                  true);
 		coms.REarthOptionSelector = new ae.view.SelectBox(REarthOptions,
 		                                                  1,
-		                                                  'right Earth',
+		                                                  'right Earth overlays',
 		                                                  ae.CP_R_EARTH_EXTRAS_SELECTOR_ID,
 		                                                  true);
 
-		coms.LEarthOptionSelector.addClickEventListener(coms.toggleEarthExtraCommand);
-		coms.REarthOptionSelector.addClickEventListener(coms.toggleEarthExtraCommand);
+		coms.toggleLeftEarthExtraCommandFactory  = new ae.command.ToggleEarthExtraCommandFactory(coms.earthsController, 'LEarth');
+		coms.toggleRightEarthExtraCommandFactory = new ae.command.ToggleEarthExtraCommandFactory(coms.earthsController, 'REarth');
+		
+		coms.LEarthOptionSelector.addClickEventListeners(coms.toggleLeftEarthExtraCommandFactory);
+		coms.REarthOptionSelector.addClickEventListeners(coms.toggleRightEarthExtraCommandFactory);
 		
 		coms.LEarthToggleTimeControlButton = new ae.view.TwoEarthsButton("toggle left time bar",  ae.CP_L_EARTH_TIME_CONTROL_TOGGLE, coms.earthsManager);
 		coms.REarthToggleTimeControlButton = new ae.view.TwoEarthsButton("toggle right time bar", ae.CP_R_EARTH_TIME_CONTROL_TOGGLE, coms.earthsManager);
-		
-		//TODO: move to separate class
-		org.anotherearth.command.ToggleSpecificEarthExtraCommand = function(earthsController, earthId, extraId) {
-			var earthsController;
 
-			this.execute = function() {
-				earthsController.toggleEarthExtra(earthId, extraId);
-			};
-		};
-
-		coms.LEarthToggleTimeControlButton.addClickEventListener(new org.anotherearth.command.ToggleSpecificEarthExtraCommand(coms.earthsController, "LEarth", "time"));
-		coms.REarthToggleTimeControlButton.addClickEventListener(new org.anotherearth.command.ToggleSpecificEarthExtraCommand(coms.earthsController, "REarth", "time"));
+		coms.LEarthToggleTimeControlButton.addClickEventListener(coms.toggleLeftEarthExtraCommandFactory.createParameterizedCommand("time"));
+		coms.REarthToggleTimeControlButton.addClickEventListener(coms.toggleRightEarthExtraCommandFactory.createParameterizedCommand("time"));
 		
 		//search boxes
 		coms.leftEarthSearch  = new ae.view.SearchBox(coms.leftEarth,  coms.earthsController, ae.L_EARTH_SEARCH_BOX_ID, 'left Earth');
